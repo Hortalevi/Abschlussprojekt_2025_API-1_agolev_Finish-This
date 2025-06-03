@@ -1,13 +1,7 @@
 import { useState } from 'react';
 import JoinForm from './JoinForm';
+import GameScreen from './GameScreen';
 import './App.css';
-
-const GameScreen = ({ nickname, roomCode }: { nickname: string; roomCode: string }) => (
-  <div>
-    <h2>Welcome, {nickname}!</h2>
-    <p>You joined room <strong>{roomCode}</strong>.</p>
-  </div>
-);
 
 function App() {
   const [nickname, setNickname] = useState('');
