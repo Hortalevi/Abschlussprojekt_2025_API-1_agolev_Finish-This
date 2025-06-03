@@ -4,6 +4,13 @@
   margin: 0;
   padding: 0;
 }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
 
 body {
   background-color: #1e1e1e;
@@ -19,6 +26,10 @@ body {
   justify-content: center;
   align-items: center;
   margin: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
 }
 
 * {
