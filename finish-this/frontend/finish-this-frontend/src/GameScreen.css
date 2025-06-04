@@ -26,3 +26,52 @@
   resize: none;
   margin-bottom: 20px;
 }
+
+.waiting-message {
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #eee;
+  margin-top: 1rem;
+}
+
+.dots::after {
+  content: "";
+  display: inline-block;
+  animation: dots 1.5s steps(3, end) infinite;
+}
+
+@keyframes dots {
+  0% {
+    content: "";
+  }
+  33% {
+    content: ".";
+  }
+  66% {
+    content: "..";
+  }
+  100% {
+    content: "...";
+  }
+}
+.sentence-list {
+  list-style: none;
+  padding: 0 10px;
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.sentence-list li {
+  margin-bottom: 12px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.sentence-list li strong {
+  color: #fff;
+}
+
+.sentence-list li:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

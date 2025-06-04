@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 interface Props {
-  onJoin: (nickname: string, roomCode: string) => void;
+  readonly onJoin: (nickname: string, roomCode: string) => void;
 }
 
 export default function JoinForm({ onJoin }: Props) {
@@ -9,10 +9,19 @@ export default function JoinForm({ onJoin }: Props) {
   const [roomCode, setRoomCode] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!nickname || !roomCode) return alert("Please fill in both fields");
-    onJoin(nickname.trim(), roomCode.trim());
-  };
+  e.preventDefault();
+  const roomCodePattern = /^\d{4}$/;
+
+  if (!nickname || !roomCode) {
+    return alert("Please fill in both fields");
+  }
+
+  if (!roomCodePattern.test(roomCode)) {
+    return alert("Room code must be exactly 4 digits");
+  }
+
+  onJoin(nickname, roomCode);
+};
 
   return (
     <form className="form-container" onSubmit={handleSubmit}>
@@ -30,9 +39,15 @@ export default function JoinForm({ onJoin }: Props) {
       <input
         className="input-field"
         type="text"
-        placeholder="Room Code"
+        placeholder="Room Code (4 digits)"
         value={roomCode}
-        onChange={(e) => setRoomCode(e.target.value)}
+        onChange={(e) => {
+           const value = e.target.value;
+           if (/^\d{0,4}$/.test(value)) {
+            setRoomCode(value);
+          }
+        }}
+        maxLength={4}
       />
       <br />
 
