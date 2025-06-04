@@ -10,14 +10,15 @@ const sentenceStarters = [
 ];
 
 interface Props {
-  nickname: string;
-  roomCode: string;
+  readonly nickname: string;
+  readonly roomCode: string;
 }
 
 export default function GameScreen({ nickname, roomCode }: Props) {
   const [starter, setStarter] = useState('');
   const [sentence, setSentence] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [showAllSentences, setShowAllSentences] = useState(false);
 
   useEffect(() => {
     const random = sentenceStarters[Math.floor(Math.random() * sentenceStarters.length)];
@@ -34,9 +35,77 @@ export default function GameScreen({ nickname, roomCode }: Props) {
       alert("Max 200 characters.");
       return;
     }
+
     setSubmitted(true);
     console.log(`User "${nickname}" in room "${roomCode}" submitted: ${sentence}`);
+
+    // Simulate all players submitting after 3 seconds
+    setTimeout(() => {
+      setShowAllSentences(true);
+    }, 3000);
   };
+
+  const mockSentences = [
+    { nickname: 'Alice', text: '…the cat stole my pizza!' },
+    { nickname: 'Bob', text: '…I woke up on Mars.' },
+    { nickname: 'Charlie', text: '…everything turned into cheese.' },
+    { nickname: nickname, text: sentence },
+  ];
+
+  function shuffleArray<T>(array: T[]): T[] {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }
+
+  function renderContent() {
+    if (!submitted) {
+      return (
+        <form onSubmit={handleSubmit}>
+          <textarea
+            value={sentence}
+            onChange={(e) => setSentence(e.target.value)}
+            maxLength={200}
+            rows={4}
+            placeholder="Finish the sentence..."
+            className="input-field"
+          />
+          <button type="submit" className="button-join">Submit</button>
+        </form>
+      );
+    }
+
+    if (!showAllSentences) {
+      return (
+        <div style={{ marginTop: '1rem' }}>
+          <p style={{ fontStyle: 'italic' }}>
+            Your sentence was submitted!
+          </p>
+          <p className="waiting-message">
+            Waiting for other players<span className="dots"></span>
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        <p className="waiting-message">
+          All players submitted! Here are the sentence endings:
+        </p>
+        <ul className="sentence-list">
+          {shuffleArray(mockSentences).map((entry) => (
+            <li key={`${entry.nickname}-${entry.text}`}>
+              <strong>{entry.nickname}:</strong> {entry.text}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
 
   return (
     <div className="form-container-GameScreen">
@@ -53,23 +122,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
         {starter}
       </p>
 
-      {!submitted ? (
-        <form onSubmit={handleSubmit}>
-          <textarea
-            value={sentence}
-            onChange={(e) => setSentence(e.target.value)}
-            maxLength={200}
-            rows={4}
-            placeholder="Finish the sentence..."
-            className="input-field"
-          />
-          <button type="submit" className="button-join">Submit</button>
-        </form>
-      ) : (
-        <p style={{ marginTop: '1rem', fontStyle: 'italic' }}>
-              Your sentence was submitted!
-        </p>
-      )}
+      {renderContent()}
 
       <h4 style={{ marginTop: '1.5rem', fontStyle: 'italic', color: '#ccc' }}>
         Room: {roomCode}
