@@ -39,10 +39,17 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     setSubmitted(true);
     console.log(`User "${nickname}" in room "${roomCode}" submitted: ${sentence}`);
 
-    // Simulate all players submitting after 3 seconds
     setTimeout(() => {
       setShowAllSentences(true);
     }, 3000);
+  };
+
+  const handleNewRound = () => {
+    setSentence('');
+    setSubmitted(false);
+    setShowAllSentences(false);
+    const newStarter = sentenceStarters[Math.floor(Math.random() * sentenceStarters.length)];
+    setStarter(newStarter);
   };
 
   const mockSentences = [
@@ -62,55 +69,65 @@ export default function GameScreen({ nickname, roomCode }: Props) {
   }
 
   function renderContent() {
-    if (!submitted) {
-      return (
-        <form onSubmit={handleSubmit}>
-          <textarea
-            value={sentence}
-            onChange={(e) => setSentence(e.target.value)}
-            maxLength={200}
-            rows={4}
-            placeholder="Finish the sentence..."
-            className="input-field"
-          />
-          <button type="submit" className="button-join">Submit</button>
-        </form>
-      );
-    }
-
-    if (!showAllSentences) {
-      return (
-        <div style={{ marginTop: '1rem' }}>
-          <p style={{ fontStyle: 'italic' }}>
-            Your sentence was submitted!
-          </p>
-          <p className="waiting-message">
-            Waiting for other players<span className="dots"></span>
-          </p>
-        </div>
-      );
-    }
-
+  if (!submitted) {
     return (
-      <div>
-        <p className="waiting-message">
-          All players submitted! Here are the sentence endings:
+      <form onSubmit={handleSubmit}>
+        <textarea
+          value={sentence}
+          onChange={(e) => setSentence(e.target.value)}
+          maxLength={200}
+          rows={4}
+          placeholder="Finish the sentence..."
+          className="input-field"
+        />
+        <button type="submit" className="button-join">Submit</button>
+      </form>
+    );
+  }
+
+  if (!showAllSentences) {
+    return (
+      <div style={{ marginTop: '1rem' }}>
+        <p style={{ fontStyle: 'italic' }}>
+          Your sentence was submitted!
         </p>
-        <ul className="sentence-list">
-          {shuffleArray(mockSentences).map((entry) => (
-            <li key={`${entry.nickname}-${entry.text}`}>
-              <strong>{entry.nickname}:</strong> {entry.text}
-            </li>
-          ))}
-        </ul>
+        <p className="waiting-message">
+          Waiting for other players<span className="dots"></span>
+        </p>
       </div>
     );
   }
 
   return (
+    <div className="result-section">
+      <p className="waiting-message">
+        All players submitted! Here are the sentence endings:
+      </p>
+      <ul className="sentence-list">
+        {shuffleArray(mockSentences).map((entry) => (
+          <li key={`${entry.nickname}-${entry.text}`}>
+            <strong>{entry.nickname}:</strong> {entry.text}
+          </li>
+        ))}
+      </ul>
+
+      {/* 👇 Button clearly visible under the list */}
+      <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+        <button
+          onClick={handleNewRound}
+          className="button-join"
+        >
+          🔁 Start New Round
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
+  return (
     <div className="form-container-GameScreen">
       <h2>Hi {nickname}, your sentence is:</h2>
-
       <p style={{
         fontSize: "1.3rem",
         fontWeight: "bold",
