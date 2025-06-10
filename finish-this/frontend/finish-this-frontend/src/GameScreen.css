@@ -110,3 +110,37 @@
     padding: 10px 16px;
   }
 }
+
+.emoji-buttons {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.emoji-button {
+  font-size: 1.2rem;
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.emoji-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.emoji-button.selected {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-color: white;
+}
+
+.emoji-display {
+  margin-top: 0.3rem;
+  font-size: 1.4rem;
+  color: #fff;
+}
