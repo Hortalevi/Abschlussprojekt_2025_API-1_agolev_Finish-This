@@ -43,11 +43,11 @@ export async function getRoomStatus(roomCode: string): Promise<{
   return res.json();
 }
 
-export async function vote(roomCode: string, sentenceId: string, nickname: string) {
+export async function vote(roomCode: string, sentenceId: string, nickname: string, emoji: string) {
   const res = await fetch(`${BASE_URL}/vote`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ roomCode, sentenceId, nickname }),
+    body: JSON.stringify({ roomCode, sentenceId, nickname, emoji }),
   });
 
   if (!res.ok) throw new Error("Vote failed");
