@@ -109,7 +109,9 @@ app.post("/submit", (req, res) => {
   if (!player) return res.status(403).send("Player not in room");
 
   const id = Date.now().toString();
-  room.sentences.push({ id, text: sentence, author: nickname, votes: 0 });
+
+  room.sentences.push({ id, text: sentence, author: nickname, votes: [] });
+
   player.submitted = true;
 
   res.status(200).send("Sentence submitted");
@@ -143,14 +145,18 @@ app.post("/vote", (req, res) => {
     return res.status(404).send("Sentence not found");
   }
 
-  sentence.votes = sentence.votes || [];
-  sentence.votes.push(emoji); // Speichere das Emoji
+  // Absicherung für votes-Array
+  if (!Array.isArray(sentence.votes)) {
+    sentence.votes = [];
+  }
+
+  sentence.votes.push(emoji);
 
   const points = emojiPoints[emoji];
 
   const author = room.players.find((p) => p.nickname === sentence.author);
   if (author) {
-    author.score = (author.score || 0) + points; // Addiere Punkte zum Autor
+    author.score = (author.score || 0) + points;
   }
 
   const player = room.players.find((p) => p.nickname === nickname);
@@ -181,10 +187,11 @@ app.get("/sentences/:roomCode", (req, res) => {
   const room = getRoomByCode(req.params.roomCode);
   if (!room) return res.status(404).send("Room not found");
 
-  const sentences = room.sentences.map(({ id, text, votes }) => ({
+  const sentences = room.sentences.map(({ id, text, votes, author }) => ({
     id,
     text,
     votes,
+    author,
   }));
 
   res.json(sentences);

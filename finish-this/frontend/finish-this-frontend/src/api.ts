@@ -1,3 +1,5 @@
+import type { SentenceEntry } from './types';
+
 const BASE_URL = "http://localhost:3000";
 
 export async function joinRoom(roomCode: string, nickname: string): Promise<void> {
@@ -59,10 +61,9 @@ export async function isRoomReady(roomCode: string): Promise<{ ready: boolean }>
   return res.json();
 }
 
-export async function getSentences(roomCode: string): Promise<{ id: string; text: string }[]> {
-  const res = await fetch(`${BASE_URL}/sentences/${roomCode}`);
-  if (!res.ok) throw new Error("Failed to fetch sentences");
-  return res.json();
+export async function getSentences(roomCode: string): Promise<SentenceEntry[]> {
+  const response = await fetch(`${BASE_URL}/sentences/${roomCode}`);
+  return await response.json();
 }
 
 export async function getScores(roomCode: string): Promise<{ nickname: string; score: number }[]> {
@@ -70,6 +71,7 @@ export async function getScores(roomCode: string): Promise<{ nickname: string; s
   if (!res.ok) throw new Error("Failed to fetch scores");
   return res.json();
 }
+
 
 export async function getStarter(roomCode: string): Promise<{ starter: string }> {
   const res = await fetch(`${BASE_URL}/starter/${roomCode}`);
@@ -97,5 +99,7 @@ export async function getRound(roomCode: string): Promise<number> {
   const data = await res.json();
   return data.round;
 }
+
+
 
 

@@ -4,28 +4,30 @@ function getRoomByCode(code) {
   return rooms.find((r) => r.roomCode === code);
 }
 
-function createRoomIfNotExists(roomCode) {
+function addPlayer(roomCode, nickname) {
   let room = getRoomByCode(roomCode);
+
   if (!room) {
     room = {
       roomCode,
       players: [],
       sentences: [],
       starter: null,
-      stared: false,
+      started: false,
       countdownEnd: null,
+      round: 1,
     };
-    room.players.push({ nickname, score: 0, submitted: false, voted: false });
     rooms.push(room);
   }
-  return room;
-}
 
-function addPlayer(roomCode, nickname) {
-  const room = createRoomIfNotExists(roomCode);
   const existing = room.players.find((p) => p.nickname === nickname);
   if (!existing) {
-    room.players.push({ nickname, score: 0, submitted: false });
+    room.players.push({
+      nickname,
+      score: 0,
+      submitted: false,
+      voted: false,
+    });
   }
 
   if (!room.countdownEnd) {
@@ -51,23 +53,23 @@ function submitSentence(roomCode, nickname, text) {
   }
 }
 
-function voteForSentence(roomCode, sentenceId) {
+function voteForSentence(roomCode, sentenceId, emoji) {
   const room = getRoomByCode(roomCode);
   if (!room) return;
 
   const sentence = room.sentences.find((s) => s.id === sentenceId);
   if (!sentence) return;
 
-  sentence.votes += 1;
+  if (!Array.isArray(sentence.votes)) {
+    sentence.votes = [];
+  }
 
-  const player = room.players.find((p) => p.nickname === sentence.author);
-  if (player) player.score += 1;
+  sentence.votes.push(emoji);
 }
 
 module.exports = {
   rooms,
   getRoomByCode,
-  createRoomIfNotExists,
   addPlayer,
   submitSentence,
   voteForSentence,
