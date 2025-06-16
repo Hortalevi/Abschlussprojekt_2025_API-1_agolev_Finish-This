@@ -160,12 +160,11 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     });
 
     try {
-      await vote(roomCode, sentenceId, nickname);
+      await vote(roomCode, sentenceId, nickname, emoji);
     } catch (error) {
       console.error("Voting error:", error);
       alert("Error while voting.");
       
-      // Rollback bei Fehler
       setUserVotes(prev => {
         const updated = { ...prev };
         delete updated[sentenceId];

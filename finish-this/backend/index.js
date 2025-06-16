@@ -47,6 +47,7 @@ app.post("/create", (req, res) => {
     starter: null,
     countdownEnd,
     started: false,
+    round: 1,
   };
 
   rooms.push(room);
@@ -115,10 +116,21 @@ app.post("/submit", (req, res) => {
 });
 
 app.post("/vote", (req, res) => {
-  const { roomCode, sentenceId, nickname } = req.body;
+  const { roomCode, sentenceId, nickname, emoji } = req.body;
 
-  if (!roomCode || !sentenceId || !nickname) {
+  if (!roomCode || !sentenceId || !nickname || !emoji) {
     return res.status(400).send("Missing fields");
+  }
+
+  const emojiPoints = {
+    "😍": 3,
+    "😂": 2,
+    "🤔": 1,
+    "💩": 0,
+  };
+
+  if (typeof emoji !== "string" || !(emoji in emojiPoints)) {
+    return res.status(400).send("Invalid emoji");
   }
 
   const room = getRoomByCode(roomCode);
@@ -131,11 +143,14 @@ app.post("/vote", (req, res) => {
     return res.status(404).send("Sentence not found");
   }
 
-  sentence.votes = (sentence.votes || 0) + 1;
+  sentence.votes = sentence.votes || [];
+  sentence.votes.push(emoji); // Speichere das Emoji
+
+  const points = emojiPoints[emoji];
 
   const author = room.players.find((p) => p.nickname === sentence.author);
   if (author) {
-    author.score = (author.score || 0) + 1;
+    author.score = (author.score || 0) + points; // Addiere Punkte zum Autor
   }
 
   const player = room.players.find((p) => p.nickname === nickname);
@@ -192,7 +207,13 @@ app.post("/next-round", (req, res) => {
   const room = getRoomByCode(roomCode);
   if (!room) return res.status(404).send("Room not found");
 
-  room.round = (room.round || 1) + 1;
+  const currentRound = room.round || 1;
+
+  if (currentRound >= 7) {
+    return res.status(400).send("Maximum number of rounds reached");
+  }
+
+  room.round = currentRound + 1;
   room.sentences = [];
   room.players.forEach((p) => {
     p.submitted = false;

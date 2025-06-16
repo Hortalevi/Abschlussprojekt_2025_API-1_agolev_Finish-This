@@ -43,7 +43,7 @@ function submitSentence(roomCode, nickname, text) {
   if (!room) return;
 
   const id = `${Date.now()}-${Math.random()}`;
-  room.sentences.push({ id, text, author: nickname, votes: 0 });
+  room.sentences.push({ id, text, author: nickname, votes: [] });
 
   const player = room.players.find((p) => p.nickname === nickname);
   if (player) {
