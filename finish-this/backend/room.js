@@ -31,7 +31,7 @@ function addPlayer(roomCode, nickname) {
   }
 
   if (!room.countdownEnd) {
-    const countdownMs = 90 * 1000;
+    const countdownMs = 30 * 1000;
     room.countdownEnd = Date.now() + countdownMs;
 
     setTimeout(() => {

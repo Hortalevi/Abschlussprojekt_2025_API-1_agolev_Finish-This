@@ -35,10 +35,10 @@ app.post("/create", (req, res) => {
 
   let roomCode;
   do {
-    roomCode = Math.floor(1000 + Math.random() * 9000).toString();
+    roomCode = Math.floor(1000 + Math.random() * 3000).toString();
   } while (rooms.find((r) => r.roomCode === roomCode));
 
-  const countdownEnd = Date.now() + 90_000;
+  const countdownEnd = Date.now() + 30_000;
 
   const room = {
     roomCode,
@@ -81,7 +81,7 @@ app.get("/status/:roomCode", (req, res) => {
   if (!room) return res.status(404).send("Room not found");
 
   if (!room.countdownEnd) {
-    room.countdownEnd = Date.now() + 90_000;
+    room.countdownEnd = Date.now() + 30_000;
     room.started = false;
   }
 
