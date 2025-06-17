@@ -1,5 +1,4 @@
 import type React from "react"
-
 import { useEffect, useState, useCallback } from "react"
 import "./GameScreen.css"
 import type { SentenceEntry } from "./types"
@@ -62,6 +61,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
   const [isLoading, setIsLoading] = useState(false)
   const [pollIntervalId, setPollIntervalId] = useState<number | null>(null)
   const [showPodium, setShowPodium] = useState(false)
+  const [totalScores, setTotalScores] = useState<Record<string, number>>({})
 
   const handleNewRound = useCallback(async () => {
     setSentence("")
@@ -98,7 +98,18 @@ export default function GameScreen({ nickname, roomCode }: Props) {
 
         if (showAllSentences && !allVoted) {
           const res = await hasEveryoneVoted(roomCode)
-          if (res.allVoted) setAllVoted(true)
+          if (res.allVoted) {
+            setAllVoted(true)
+            const newScores: Record<string, number> = { ...totalScores }
+
+            const serverSentences = await getSentences(roomCode)
+            serverSentences.forEach(({ author, votes }) => {
+              const score = (votes || []).reduce((sum, emoji) => sum + (emojiPoints[emoji] || 0), 0)
+              newScores[author] = (newScores[author] || 0) + score
+            })
+
+            setTotalScores(newScores)
+          }
         }
 
         if (currentRound > 7 && !showPodium) {
@@ -110,7 +121,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [roomCode, starter, showAllSentences, allVoted, round, showPodium, handleNewRound])
+  }, [roomCode, starter, showAllSentences, allVoted, round, showPodium, handleNewRound, totalScores])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -200,8 +211,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
         return { ...s, score }
       })
 
-      const maxScore = Math.max(...sentenceScores.map((s) => s.score))
-      const winningIds = sentenceScores.filter((s) => s.score === maxScore).map((s) => s.id)
+      const sortedSentences = sentenceScores.sort((a, b) => b.score - a.score)
 
       const totals: Record<string, number> = {}
       sentenceScores.forEach(({ author, score }) => {
@@ -210,67 +220,93 @@ export default function GameScreen({ nickname, roomCode }: Props) {
 
       const sortedPlayers = Object.entries(totals).sort(([, a], [, b]) => b - a)
 
+      // Finde die besten Sätze (höchste Punktzahl)
+      const maxSentenceScore = Math.max(...sortedSentences.map((s) => s.score))
+      const bestSentenceIds = sortedSentences.filter((s) => s.score === maxSentenceScore).map((s) => s.id)
+
       return (
-        <div className="result-section">
-          <h2>🏁 Final Results</h2>
-          <ul className="sentence-list">
-            {sentenceScores.map((entry) => {
-              const votes = entry.votes || []
-              const summary = votes.reduce((acc: Record<string, number>, emoji) => {
-                acc[emoji] = (acc[emoji] || 0) + 1
-                return acc
-              }, {})
-              return (
-                <li
-                  key={entry.id}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    // Goldener Rahmen nur für die Gewinner-Sätze im Podium
-                    border: winningIds.includes(entry.id) ? "2px solid gold" : "none",
-                    borderRadius: "8px",
-                    padding: "10px",
-                    marginBottom: "10px",
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  }}
-                >
-                  <div>
-                    <strong>Someone:</strong> {entry.text}
-                    {Object.keys(summary).length > 0 && (
-                      <div style={{ fontSize: "0.85rem", marginTop: "4px", color: "#aaa" }}>
-                        {Object.entries(summary).map(([emoji, count]) => (
-                          <span key={emoji} style={{ marginRight: "8px" }}>
-                            {emoji} x{count}
-                          </span>
-                        ))}
+        <div className="results-container">
+          <div className="results-header">
+            <h2 className="results-title">🏁 Final Results</h2>
+          </div>
+
+          <div className="results-section">
+            <h3 className="section-title">🏆 Best Sentences</h3>
+            <div className="sentence-container">
+              {sortedSentences.map((entry) => {
+                const votes = entry.votes || []
+                const summary = votes.reduce((acc: Record<string, number>, emoji) => {
+                  acc[emoji] = (acc[emoji] || 0) + 1
+                  return acc
+                }, {})
+
+                const isBestSentence = bestSentenceIds.includes(entry.id)
+
+                return (
+                  <div key={entry.id} className={`sentence-card ${isBestSentence ? "best-sentence" : ""}`}>
+                    <div className="sentence-content">
+                      <div className="sentence-header">
+                        <div className="sentence-text">
+                          <strong>Someone:</strong> {entry.text}
+                        </div>
+                        <div className="sentence-score">{entry.score} pts</div>
                       </div>
-                    )}
+
+                      {Object.keys(summary).length > 0 && (
+                        <div className="vote-summary">
+                          {Object.entries(summary).map(([emoji, count]) => (
+                            <span key={emoji} className="vote-badge">
+                              {emoji} <strong>×{count}</strong>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="sentence-author">✍️ {entry.author}</div>
                   </div>
-                  <div
-                    style={{
-                      fontSize: "0.9rem",
-                      color: "#ccc",
-                      fontStyle: "italic",
-                      marginLeft: "20px",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    ✍️ {entry.author}
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="results-section podium-section">
+            <h3 className="section-title">👑 Top Authors</h3>
+            <p className="section-subtitle">Based on total points from all sentences</p>
+
+            <div className="podium-container">
+              {sortedPlayers.slice(0, 3).map(([player, score], idx) => (
+                <div key={player} className={`podium-step ${idx === 0 ? "first" : idx === 1 ? "second" : "third"}`}>
+                  <div className="player-info">
+                    <div className="medal">{getMedal(idx)}</div>
+                    <div className="player-name">{player}</div>
+                    <div className="player-score">{score} Punkte</div>
                   </div>
-                </li>
-              )
-            })}
-          </ul>
-          <div className="podium" style={{ marginTop: "2rem" }}>
-            <h3>🏆 Podium</h3>
-            <ol>
-              {sortedPlayers.map(([player, score], idx) => (
-                <li key={player} style={{ fontWeight: idx === 0 ? "bold" : "normal" }}>
-                  {getMedal(idx)} {player} – {score} Punkte
-                </li>
+                  <div className="step-base"></div>
+                </div>
               ))}
-            </ol>
+            </div>
+
+            {sortedPlayers.length > 3 && (
+              <div className="remaining-players">
+                <h4>Weitere Plätze</h4>
+                <div className="player-list">
+                  {sortedPlayers.slice(3).map(([player, score], idx) => (
+                    <div key={player} className="player-item">
+                      <span className="player-rank">{idx + 4}.</span>
+                      <span className="player-name">{player}</span>
+                      <span className="player-score">{score} Punkte</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="results-footer">
+            <button className="button-join" onClick={() => window.location.reload()}>
+              🔙 Back to the Lobby
+            </button>
           </div>
         </div>
       )
@@ -309,7 +345,6 @@ export default function GameScreen({ nickname, roomCode }: Props) {
       )
     }
 
-    // Voting-Phase: KEIN goldener Rahmen hier
     return (
       <div className="result-section">
         <p className="waiting-message">All players submitted! Here are the sentence endings:</p>
@@ -320,18 +355,9 @@ export default function GameScreen({ nickname, roomCode }: Props) {
               acc[emoji] = (acc[emoji] || 0) + 1
               return acc
             }, {})
+
             return (
-              <li
-                key={entry.id}
-                style={{
-                  // Kein goldener Rahmen in der Voting-Phase
-                  border: "none",
-                  borderRadius: "8px",
-                  padding: "8px",
-                  marginBottom: "8px",
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                }}
-              >
+              <li key={entry.id}>
                 <strong>Someone:</strong> {entry.text}
                 {Object.keys(summary).length > 0 && (
                   <div style={{ fontSize: "0.85rem", marginTop: "4px", color: "#aaa" }}>
@@ -372,7 +398,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
         </ul>
 
         {allVoted ? (
-          <div style={{ textAlign: "center", marginTop: "2rem" }}>
+          <div className="button-container">
             {round < 7 ? (
               <button onClick={triggerNextRound} className="button-join" disabled={isLoading}>
                 {isLoading ? "Starting..." : "🔁 Start New Round"}
@@ -384,8 +410,10 @@ export default function GameScreen({ nickname, roomCode }: Props) {
             )}
           </div>
         ) : (
-          <div style={{ marginTop: "1rem", textAlign: "center", fontStyle: "italic", color: "#ccc" }}>
-            Waiting for everyone to vote...
+          <div className="button-container">
+            <div style={{ fontStyle: "italic", color: "#ccc", fontSize: "0.9rem" }}>
+              Waiting for everyone to vote...
+            </div>
           </div>
         )}
       </div>
@@ -399,33 +427,22 @@ export default function GameScreen({ nickname, roomCode }: Props) {
         <p>
           Game will start in <strong>{secondsLeft !== null ? formatTime(secondsLeft) : "..."}</strong>
         </p>
-        {secondsLeft !== null && <CountdownBar secondsLeft={secondsLeft} totalSeconds={90} />}
-        <p style={{ marginTop: "2rem", fontStyle: "italic", color: "#ccc" }}>Room: {roomCode}</p>
+        {secondsLeft !== null && <CountdownBar secondsLeft={secondsLeft} totalSeconds={30} />}
+        <p className="game-info">Room: {roomCode}</p>
       </div>
     )
   }
 
   return (
-    <div className="form-container-GameScreen">
+    <div className={`form-container-GameScreen ${showPodium ? "results-mode" : ""}`}>
       <h2>Hi {nickname}, your sentence is:</h2>
-      <p
-        style={{
-          fontSize: "1.3rem",
-          fontWeight: "bold",
-          marginTop: "1rem",
-          backgroundColor: "rgba(255,255,255,0.1)",
-          padding: "10px",
-          borderRadius: "8px",
-        }}
-      >
-        {starter}
-      </p>
+      <div className="starter-sentence">{starter}</div>
 
       {renderContent()}
 
-      <h4 style={{ marginTop: "1.5rem", fontStyle: "italic", color: "#ccc" }}>
+      <div className="game-info">
         Room: {roomCode} | Round: {round}
-      </h4>
+      </div>
     </div>
   )
 }

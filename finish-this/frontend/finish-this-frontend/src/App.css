@@ -4,17 +4,26 @@
   margin: 0;
   padding: 0;
 }
+
 html,
 body {
   margin: 0;
   padding: 0;
   height: 100%;
   overflow: hidden;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
 }
 
 body {
-  background-color: #1e1e1e;
-  font-family: Arial, sans-serif;
+  background-color: #0f0f23;
   color: #ffffff;
   text-align: center;
   background-image: url("/background.jpg");
@@ -34,66 +43,150 @@ body {
 
 * {
   box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }
 
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: linear-gradient(
+    135deg,
+    rgba(15, 15, 35, 0.8),
+    rgba(30, 30, 60, 0.6)
+  );
   z-index: -1;
 }
 
 .form-container {
-  width: 360px;
+  width: 400px;
   margin: 60px auto;
-  padding: 32px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 40px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: #ffffff;
   text-align: center;
+  transition: all 0.3s ease;
+  /* Ensure scrolling works but scrollbar is hidden */
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.form-container::-webkit-scrollbar {
+  display: none;
+}
+
+.form-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .form-container h2 {
-  margin-bottom: 25px;
-  font-size: 24px;
-  font-weight: bold;
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+  margin-bottom: 32px;
+  font-size: 28px;
+  font-weight: 700;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #ffffff, #e0e0e0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
 }
 
 .input-field {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 18px;
-  border: none;
-  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
   font-size: 16px;
-  background-color: rgba(255, 255, 255, 0.85);
-  color: #222;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a1a1a;
   display: block;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #a855f7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2), 0 4px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
 }
 
 .input-field::placeholder {
-  color: #666;
+  color: #6b7280;
+  font-weight: 400;
 }
 
 .button-join {
-  background-color: #a05fff;
+  background: linear-gradient(135deg, #a855f7, #8b5cf6);
   color: white;
-  padding: 12px 24px;
+  padding: 16px 32px;
   font-size: 16px;
+  font-weight: 600;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  min-width: 140px;
+}
+
+.button-join::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.button-join:hover::before {
+  left: 100%;
 }
 
 .button-join:hover {
-  background-color: #8c4de0;
+  background: linear-gradient(135deg, #9333ea, #7c3aed);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(168, 85, 247, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.button-join:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.button-join:disabled {
+  background: rgba(107, 114, 128, 0.5);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .landing-screen {
@@ -110,6 +203,14 @@ body::before {
   padding: 40px;
   color: white;
   box-sizing: border-box;
+  /* Hide scrollbar but allow scrolling */
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.landing-screen::-webkit-scrollbar {
+  display: none;
 }
 
 .joined-screen {
@@ -127,10 +228,53 @@ body::before {
   color: white;
   box-sizing: border-box;
   width: 100vw;
+  /* Hide scrollbar but allow scrolling */
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.joined-screen::-webkit-scrollbar {
+  display: none;
 }
 
 h1 {
   margin-top: -3vh;
   margin-bottom: 13vh;
-  font-size: 3rem;
+  font-size: 3.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff, #a855f7, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  letter-spacing: -2px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 480px) {
+  .form-container {
+    width: 90%;
+    padding: 32px 24px;
+    margin: 40px auto;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 8vh;
+  }
+
+  .form-container h2 {
+    font-size: 24px;
+  }
+
+  .input-field {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+
+  .button-join {
+    padding: 14px 28px;
+    font-size: 15px;
+  }
 }
