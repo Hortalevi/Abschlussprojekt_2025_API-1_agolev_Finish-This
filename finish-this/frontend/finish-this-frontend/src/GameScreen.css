@@ -1,13 +1,15 @@
+/* Base styles - Mobile first approach */
 .form-container-GameScreen {
   width: 95%;
   max-width: 1200px;
   min-height: 85vh;
   max-height: 95vh;
   margin: -2vh auto 2vh auto;
-  padding: 30px 30px 80px 30px;
+  padding: clamp(12px, 3vw, 30px) clamp(12px, 3vw, 30px) clamp(60px, 8vh, 80px)
+    clamp(12px, 3vw, 30px);
   display: flex;
   flex-direction: column;
-  border-radius: 24px;
+  border-radius: clamp(16px, 2.5vw, 24px);
   background: rgba(255, 255, 255, 0.08);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -27,12 +29,13 @@
   max-height: 90vh;
   height: auto;
   min-height: auto;
-  padding: 20px 20px 80px 20px;
+  padding: clamp(12px, 2.5vw, 20px) clamp(12px, 2.5vw, 20px)
+    clamp(60px, 8vh, 80px) clamp(12px, 2.5vw, 20px);
   margin: 1vh auto 3vh auto;
 }
 
 .form-container-GameScreen::-webkit-scrollbar {
-  width: 12px;
+  width: clamp(8px, 1.2vw, 12px);
 }
 
 .form-container-GameScreen::-webkit-scrollbar-track {
@@ -54,9 +57,9 @@
 }
 
 .form-container-GameScreen h2 {
-  font-size: 28px;
+  font-size: clamp(20px, 5vw, 28px);
   font-weight: 700;
-  margin-bottom: 20px;
+  margin-bottom: clamp(15px, 3vw, 20px);
   background: linear-gradient(135deg, #ffffff, #e0e0e0);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -67,12 +70,12 @@
 }
 
 .starter-sentence {
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
   font-weight: bold;
   margin: 0.5rem 0 1rem 0;
   background: rgba(255, 255, 255, 0.1);
-  padding: 12px 16px;
-  border-radius: 12px;
+  padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 16px);
+  border-radius: clamp(10px, 1.5vw, 12px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -81,18 +84,19 @@
 
 .input-field {
   width: 100%;
-  padding: 20px 24px;
+  padding: clamp(16px, 3vw, 20px) clamp(20px, 3.5vw, 24px);
   border: 2px solid rgba(255, 255, 255, 0.15);
-  border-radius: 16px;
-  font-size: 16px;
+  border-radius: clamp(12px, 2vw, 16px);
+  font-size: clamp(14px, 2.5vw, 16px);
   font-weight: 500;
   background: rgba(255, 255, 255, 0.95);
   color: #1a1a1a;
   resize: none;
-  margin-bottom: 24px;
+  margin-bottom: clamp(20px, 3vw, 24px);
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   line-height: 1.5;
+  min-height: clamp(60px, 8vh, 80px);
 }
 
 .input-field:focus {
@@ -109,13 +113,13 @@
 
 .waiting-message {
   font-style: italic;
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2.2vw, 1.1rem);
   font-weight: 500;
   color: #e5e7eb;
   margin: 0.5rem 0 1rem 0;
-  padding: 12px 16px;
+  padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 16px);
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
+  border-radius: clamp(10px, 1.5vw, 12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
 }
@@ -154,19 +158,19 @@
   padding: 0;
   margin: 0;
   text-align: left;
-  max-height: 35vh;
+  max-height: clamp(250px, 35vh, 400px);
   overflow-y: auto;
   overflow-x: hidden;
-  border-radius: 16px;
+  border-radius: clamp(12px, 2vw, 16px);
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.1);
   scrollbar-width: thin;
   scrollbar-color: #a855f7 rgba(255, 255, 255, 0.1);
-  margin-bottom: 20px;
+  margin-bottom: clamp(15px, 3vw, 20px);
 }
 
 .sentence-list::-webkit-scrollbar {
-  width: 8px;
+  width: clamp(6px, 1vw, 8px);
 }
 
 .sentence-list::-webkit-scrollbar-track {
@@ -185,38 +189,38 @@
 }
 
 .sentence-list li {
-  margin: 0 16px 16px 16px;
-  padding: 16px;
+  margin: 0 clamp(12px, 2vw, 16px) clamp(12px, 2vw, 16px) clamp(12px, 2vw, 16px);
+  padding: clamp(12px, 2.5vw, 16px);
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  border-radius: clamp(10px, 1.5vw, 12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
 }
 
 .sentence-list li .vote-summary {
-  margin-top: 8px;
-  padding: 8px;
+  margin-top: clamp(6px, 1.5vw, 8px);
+  padding: clamp(6px, 1.5vw, 8px);
   background: rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
+  border-radius: clamp(6px, 1vw, 8px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .sentence-list li .vote-summary span {
   display: inline-block;
-  margin-right: 12px;
-  padding: 3px 8px;
+  margin-right: clamp(8px, 1.5vw, 12px);
+  padding: 3px clamp(6px, 1vw, 8px);
   background: rgba(0, 0, 0, 0.7);
-  border-radius: 6px;
+  border-radius: clamp(4px, 0.8vw, 6px);
   color: #ffffff;
   font-weight: 600;
-  font-size: 13px;
+  font-size: clamp(11px, 2vw, 13px);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .sentence-list li:first-child {
-  margin-top: 16px;
+  margin-top: clamp(12px, 2vw, 16px);
 }
 
 .sentence-list li:hover {
@@ -231,8 +235,8 @@
 }
 
 .button-container {
-  margin-top: 20px;
-  padding: 20px 0;
+  margin-top: clamp(15px, 3vw, 20px);
+  padding: clamp(15px, 3vw, 20px) 0;
   text-align: center;
   flex-shrink: 0;
   background: linear-gradient(
@@ -240,12 +244,12 @@
     rgba(255, 255, 255, 0.12),
     rgba(255, 255, 255, 0.04)
   );
-  border-radius: 12px;
+  border-radius: clamp(10px, 1.5vw, 12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
   position: sticky;
-  bottom: 20px;
+  bottom: clamp(15px, 3vw, 20px);
   z-index: 10;
 }
 
@@ -253,18 +257,18 @@
   display: inline-block;
   background: linear-gradient(135deg, #a855f7, #8b5cf6);
   color: white;
-  padding: 14px 28px;
-  font-size: 15px;
+  padding: clamp(12px, 2.5vw, 14px) clamp(24px, 4vw, 28px);
+  font-size: clamp(13px, 2.5vw, 15px);
   font-weight: 600;
   border: none;
-  border-radius: 12px;
+  border-radius: clamp(10px, 1.5vw, 12px);
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
-  min-width: 160px;
+  min-width: clamp(140px, 20vw, 160px);
 }
 
 .button-join:hover {
@@ -281,24 +285,24 @@
 }
 
 .emoji-buttons {
-  margin-top: 12px;
+  margin-top: clamp(10px, 2vw, 12px);
   display: flex;
-  gap: 8px;
+  gap: clamp(6px, 1vw, 8px);
   justify-content: flex-start;
   flex-wrap: wrap;
 }
 
 .emoji-button {
-  font-size: 1.2rem;
-  padding: 10px 14px;
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  padding: clamp(8px, 1.5vw, 10px) clamp(12px, 2vw, 14px);
   background: rgba(255, 255, 255, 0.08);
   border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
+  border-radius: clamp(8px, 1.2vw, 10px);
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
-  min-width: 45px;
+  min-width: clamp(40px, 6vw, 45px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -318,21 +322,21 @@
 }
 
 .emoji-display {
-  margin-top: 8px;
-  font-size: 0.95rem;
+  margin-top: clamp(6px, 1.5vw, 8px);
+  font-size: clamp(0.85rem, 1.8vw, 0.95rem);
   font-weight: 600;
   color: #e0e0e0;
-  padding: 6px 12px;
+  padding: clamp(5px, 1vw, 6px) clamp(10px, 2vw, 12px);
   background: rgba(168, 85, 247, 0.1);
-  border-radius: 6px;
+  border-radius: clamp(5px, 1vw, 6px);
   border: 1px solid rgba(190, 185, 192, 0.539);
   text-align: center;
 }
 
 .result-section h2 {
-  font-size: 24px;
+  font-size: clamp(18px, 4.5vw, 24px);
   font-weight: 700;
-  margin-bottom: 20px;
+  margin-bottom: clamp(15px, 3vw, 20px);
   background: linear-gradient(135deg, #fbbf24, #f59e0b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -346,9 +350,9 @@
     rgba(255, 255, 255, 0.15),
     rgba(255, 255, 255, 0.05)
   );
-  border-radius: 20px;
-  padding: 30px 20px;
-  margin-top: 20px;
+  border-radius: clamp(16px, 2.5vw, 20px);
+  padding: clamp(20px, 4vw, 30px) clamp(15px, 3vw, 20px);
+  margin-top: clamp(15px, 3vw, 20px);
   border: 2px solid rgba(255, 215, 0, 0.3);
   backdrop-filter: blur(15px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 215, 0, 0.2),
@@ -379,9 +383,9 @@
 }
 
 .podium h3 {
-  font-size: 28px;
+  font-size: clamp(20px, 5vw, 28px);
   font-weight: 800;
-  margin-bottom: 25px;
+  margin-bottom: clamp(20px, 4vw, 25px);
   background: linear-gradient(135deg, #ffd700, #ffed4e, #ffc107);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -394,7 +398,7 @@
 .podium h3::after {
   content: "✨";
   position: absolute;
-  right: -30px;
+  right: clamp(-25px, -4vw, -30px);
   top: 50%;
   transform: translateY(-50%);
   animation: sparkle 1.5s ease-in-out infinite;
@@ -403,7 +407,7 @@
 .podium h3::before {
   content: "✨";
   position: absolute;
-  left: -30px;
+  left: clamp(-25px, -4vw, -30px);
   top: 50%;
   transform: translateY(-50%);
   animation: sparkle 1.5s ease-in-out infinite 0.5s;
@@ -425,8 +429,8 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: 10px;
-  margin: 20px 0;
+  gap: clamp(8px, 1.5vw, 10px);
+  margin: clamp(15px, 3vw, 20px) 0;
   perspective: 1000px;
 }
 
@@ -448,8 +452,8 @@
 }
 
 .podium-step.first .step-base {
-  width: 120px;
-  height: 100px;
+  width: clamp(80px, 12vw, 120px);
+  height: clamp(65px, 10vw, 100px);
   background: linear-gradient(135deg, #ffd700, #ffed4e);
   border: 3px solid #ffc107;
   border-radius: 12px 12px 8px 8px;
@@ -464,7 +468,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 36px;
+  font-size: clamp(24px, 5vw, 36px);
   font-weight: 900;
   color: #b8860b;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -475,8 +479,8 @@
 }
 
 .podium-step.second .step-base {
-  width: 100px;
-  height: 80px;
+  width: clamp(70px, 10vw, 100px);
+  height: clamp(50px, 8vw, 80px);
   background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
   border: 3px solid #a8a8a8;
   border-radius: 12px 12px 8px 8px;
@@ -491,7 +495,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 30px;
+  font-size: clamp(20px, 4vw, 30px);
   font-weight: 900;
   color: #696969;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -502,8 +506,8 @@
 }
 
 .podium-step.third .step-base {
-  width: 90px;
-  height: 60px;
+  width: clamp(60px, 9vw, 90px);
+  height: clamp(40px, 6vw, 60px);
   background: linear-gradient(135deg, #cd7f32, #daa520);
   border: 3px solid #b8860b;
   border-radius: 12px 12px 8px 8px;
@@ -518,7 +522,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 24px;
+  font-size: clamp(16px, 3.5vw, 24px);
   font-weight: 900;
   color: #8b4513;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -526,30 +530,32 @@
 
 .player-info {
   text-align: center;
-  margin-bottom: 10px;
-  padding: 8px 12px;
+  margin-bottom: clamp(8px, 1.5vw, 10px);
+  padding: clamp(6px, 1.2vw, 8px) clamp(8px, 1.5vw, 12px);
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
+  border-radius: clamp(16px, 2.5vw, 20px);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  min-width: 100px;
+  min-width: clamp(80px, 12vw, 100px);
 }
 
 .player-name {
-  font-size: 14px;
+  font-size: clamp(10px, 2vw, 14px);
   font-weight: 700;
   color: white;
-  margin-bottom: 4px;
+  margin-bottom: clamp(3px, 0.5vw, 4px);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .player-score {
-  font-size: 12px;
+  font-size: clamp(9px, 1.8vw, 12px);
   font-weight: 600;
   opacity: 0.9;
   color: #a855f7;
-  min-width: 70px;
-  text-align: right;
+  min-width: clamp(50px, 8vw, 70px);
+  text-align: center;
 }
 
 .podium-step.first .player-score {
@@ -565,8 +571,8 @@
 }
 
 .medal {
-  font-size: 24px;
-  margin-bottom: 5px;
+  font-size: clamp(18px, 3.5vw, 24px);
+  margin-bottom: clamp(4px, 0.8vw, 5px);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
   animation: bounce 2s ease-in-out infinite;
 }
@@ -601,16 +607,16 @@
 
 /* Remaining players list */
 .remaining-players {
-  margin-top: 25px;
-  padding-top: 20px;
+  margin-top: clamp(20px, 4vw, 25px);
+  padding-top: clamp(15px, 3vw, 20px);
   border-top: 2px solid rgba(255, 215, 0, 0.3);
 }
 
 .remaining-players h4 {
-  font-size: 16px;
+  font-size: clamp(14px, 2.5vw, 16px);
   font-weight: 600;
   color: #ffd700;
-  margin-bottom: 15px;
+  margin-bottom: clamp(12px, 2.5vw, 15px);
   text-align: center;
 }
 
@@ -624,12 +630,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 16px;
-  margin-bottom: 8px;
+  padding: clamp(6px, 1.2vw, 8px) clamp(12px, 2.5vw, 16px);
+  margin-bottom: clamp(6px, 1.2vw, 8px);
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  border-radius: clamp(6px, 1vw, 8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 14px;
+  font-size: clamp(12px, 2.2vw, 14px);
   transition: all 0.3s ease;
 }
 
@@ -639,14 +645,14 @@
 }
 
 .game-info {
-  margin-top: 12px;
+  margin-top: clamp(10px, 2vw, 12px);
   font-style: italic;
   color: #ccc;
-  font-size: 0.85rem;
+  font-size: clamp(0.75rem, 1.8vw, 0.85rem);
   text-align: center;
-  padding: 6px;
+  padding: clamp(5px, 1vw, 6px);
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
+  border-radius: clamp(5px, 1vw, 6px);
   flex-shrink: 0;
 }
 
@@ -654,27 +660,27 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 20px;
+  gap: clamp(15px, 3vw, 20px);
 }
 
 .results-header {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: clamp(8px, 1.5vw, 10px);
   flex-shrink: 0;
 }
 
 .results-title {
-  font-size: 28px;
+  font-size: clamp(20px, 5vw, 28px);
   font-weight: 800;
   background: linear-gradient(135deg, #ffd700, #ffed4e, #ffc107);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
-  margin-bottom: 10px;
+  margin-bottom: clamp(8px, 1.5vw, 10px);
   position: relative;
   display: inline-block;
-  padding: 0 40px;
+  padding: 0 clamp(30px, 5vw, 40px);
 }
 
 .results-title::before,
@@ -683,7 +689,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 20px;
+  font-size: clamp(16px, 3vw, 20px);
   animation: sparkle 1.5s ease-in-out infinite;
 }
 
@@ -699,17 +705,17 @@
 
 .results-section {
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: clamp(12px, 2vw, 16px);
+  padding: clamp(15px, 3vw, 20px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px);
-  margin-bottom: 15px;
+  margin-bottom: clamp(12px, 2.5vw, 15px);
   flex-shrink: 0;
 }
 
 .section-title {
-  font-size: 20px;
+  font-size: clamp(16px, 4vw, 20px);
   font-weight: 700;
   margin-bottom: 5px;
   color: #ffd700;
@@ -718,7 +724,7 @@
 }
 
 .section-subtitle {
-  font-size: 12px;
+  font-size: clamp(10px, 3vw, 12px);
   color: rgba(255, 255, 255, 0.8);
   text-align: center;
   margin-bottom: 15px;
@@ -728,13 +734,14 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 300px;
+  max-height: 40vh;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 5px;
   margin-top: 15px;
   scrollbar-width: thin;
   scrollbar-color: #a855f7 rgba(255, 255, 255, 0.1);
+  -webkit-overflow-scrolling: touch;
 }
 
 .sentence-container::-webkit-scrollbar {
@@ -789,6 +796,7 @@
   padding: 2px;
   background: linear-gradient(135deg, #ffd700, #ffed4e, #ffd700);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
@@ -808,7 +816,7 @@
 .sentence-text {
   flex: 1;
   text-align: left;
-  font-size: 14px;
+  font-size: clamp(12px, 3.5vw, 14px);
   line-height: 1.4;
 }
 
@@ -823,7 +831,7 @@
   color: white;
   padding: 4px 8px;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 700;
   min-width: 50px;
   text-align: center;
@@ -844,7 +852,7 @@
   align-items: center;
   gap: 3px;
   background: rgba(0, 0, 0, 0.6);
-  padding: 4px 8px;
+  padding: 6px 10px;
   border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
@@ -852,6 +860,7 @@
   color: #ffffff;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  min-height: 32px;
 }
 
 .sentence-author {
@@ -967,30 +976,12 @@
     margin: -2vh auto 2vh auto;
   }
 
-  .form-container-GameScreen.results-mode {
-    max-height: 85vh;
-    padding: 15px 15px 70px 15px;
-  }
-
-  .results-title {
-    font-size: 22px;
-    padding: 0 30px;
-  }
-
-  .section-title {
-    font-size: 18px;
-  }
-
   .sentence-container {
-    max-height: 250px;
+    max-height: 35vh;
   }
 
   .sentence-card {
     padding: 10px;
-  }
-
-  .sentence-text {
-    font-size: 13px;
   }
 
   .sentence-score {
@@ -999,35 +990,14 @@
     min-width: 40px;
   }
 
-  .podium-step.first .step-base {
-    width: 80px;
-    height: 65px;
+  .section-title {
+    font-size: clamp(16px, 4vw, 18px);
   }
 
-  .podium-step.second .step-base {
-    width: 70px;
-    height: 50px;
+  .sentence-text {
+    font-size: clamp(12px, 3.5vw, 13px);
   }
 
-  .podium-step.third .step-base {
-    width: 60px;
-    height: 40px;
-  }
-
-  .player-info {
-    padding: 4px 6px;
-    min-width: 60px;
-  }
-
-  .player-name {
-    font-size: 10px;
-  }
-
-  .player-score {
-    font-size: 9px;
-  }
-
-  .button-container,
   .results-footer {
     margin-top: 15px;
     padding: 15px 0;
@@ -1047,30 +1017,12 @@
     max-height: 80vh;
   }
 
-  .form-container-GameScreen.results-mode {
-    max-height: 80vh;
-    padding: 12px 12px 60px 12px;
-  }
-
-  .results-title {
-    font-size: 18px;
-    padding: 0 25px;
-  }
-
-  .section-title {
-    font-size: 16px;
-  }
-
   .sentence-container {
-    max-height: 200px;
+    max-height: 30vh;
   }
 
   .sentence-card {
     padding: 8px;
-  }
-
-  .sentence-text {
-    font-size: 12px;
   }
 
   .sentence-score {
@@ -1079,23 +1031,12 @@
     min-width: 35px;
   }
 
-  .podium-container {
-    gap: 5px;
+  .section-title {
+    font-size: clamp(14px, 4vw, 16px);
   }
 
-  .podium-step.first .step-base {
-    width: 60px;
-    height: 50px;
-  }
-
-  .podium-step.second .step-base {
-    width: 55px;
-    height: 40px;
-  }
-
-  .podium-step.third .step-base {
-    width: 50px;
-    height: 30px;
+  .sentence-text {
+    font-size: clamp(11px, 3.5vw, 12px);
   }
 
   .player-item {
@@ -1107,12 +1048,6 @@
     font-size: 10px;
   }
 
-  .player-name,
-  .player-score {
-    font-size: 10px;
-  }
-
-  .button-container,
   .results-footer {
     margin-top: 12px;
     padding: 12px 0;
@@ -1123,5 +1058,16 @@
       rgba(255, 255, 255, 0.1)
     );
     border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+}
+
+@media screen and (max-height: 400px) and (orientation: landscape) {
+  .form-container-GameScreen {
+    padding: 8px;
+    max-height: 75vh;
+  }
+
+  .sentence-container {
+    max-height: 25vh;
   }
 }

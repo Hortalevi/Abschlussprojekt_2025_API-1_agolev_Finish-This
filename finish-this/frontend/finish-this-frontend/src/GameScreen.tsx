@@ -54,14 +54,15 @@ export default function GameScreen({ nickname, roomCode }: Props) {
   const [showAllSentences, setShowAllSentences] = useState(false)
   const [userVotes, setUserVotes] = useState<{ [key: string]: string }>({})
   const [shuffledSentences, setShuffledSentences] = useState<SentenceEntry[]>([])
-  const [secondsLeft, setSecondsLeft] = useState<number | null>(null)
+
   const [gameStarted, setGameStarted] = useState(false)
   const [allVoted, setAllVoted] = useState(false)
   const [round, setRound] = useState<number>(1)
   const [isLoading, setIsLoading] = useState(false)
-  const [pollIntervalId, setPollIntervalId] = useState<number | null>(null)
+  const [pollIntervalId, setPollIntervalId] = useState<NodeJS.Timeout | null>(null)
   const [showPodium, setShowPodium] = useState(false)
   const [totalScores, setTotalScores] = useState<Record<string, number>>({})
+  const [localCountdown, setLocalCountdown] = useState<number | null>(null)
 
   const handleNewRound = useCallback(async () => {
     setSentence("")
@@ -82,7 +83,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     const interval = setInterval(async () => {
       try {
         const status = await getRoomStatus(roomCode)
-        setSecondsLeft(status.secondsLeft)
+        setLocalCountdown(status.secondsLeft)
         setGameStarted(status.started)
 
         const currentRound = await getRound(roomCode)
@@ -122,6 +123,17 @@ export default function GameScreen({ nickname, roomCode }: Props) {
 
     return () => clearInterval(interval)
   }, [roomCode, starter, showAllSentences, allVoted, round, showPodium, handleNewRound, totalScores])
+
+  // Local countdown ticker
+  useEffect(() => {
+    if (localCountdown === null) return
+    
+    const timer = setInterval(() => {
+      setLocalCountdown((prev) => (prev !== null && prev > 0 ? prev - 1 : 0))
+    }, 1000)
+    
+    return () => clearInterval(timer)
+  }, [localCountdown])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -425,9 +437,9 @@ export default function GameScreen({ nickname, roomCode }: Props) {
       <div className="form-container-GameScreen">
         <h2>Waiting for other players...</h2>
         <p>
-          Game will start in <strong>{secondsLeft !== null ? formatTime(secondsLeft) : "..."}</strong>
+          Game will start in <strong>{localCountdown !== null ? formatTime(localCountdown) : "..."}</strong>
         </p>
-        {secondsLeft !== null && <CountdownBar secondsLeft={secondsLeft} totalSeconds={30} />}
+        {localCountdown !== null && <CountdownBar secondsLeft={localCountdown} totalSeconds={30} />}
         <p className="game-info">Room: {roomCode}</p>
       </div>
     )
