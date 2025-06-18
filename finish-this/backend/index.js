@@ -11,11 +11,14 @@ const {
   voteForSentence,
   allSubmitted,
   allVoted,
-  getScores,
   advanceRound,
   getRound,
 } = require("./room");
-const { generateUniqueRoomCode } = require("./room");
+const {
+  generateUniqueRoomCode,
+  updatePlayerScores,
+  getRanking,
+} = require("./room");
 
 const app = express();
 const PORT = 3000;
@@ -31,7 +34,7 @@ app.post("/join", async (req, res) => {
     await addPlayer(roomCode, nickname);
     res.status(200).send("Joined room");
   } catch (err) {
-    console.error(err);
+    console.error("JOIN ERROR:", err);
     res.status(500).send("Error joining room");
   }
 });
@@ -112,6 +115,18 @@ app.post("/vote", async (req, res) => {
   }
 });
 
+app.post("/calculate-scores", async (req, res) => {
+  const { roomCode } = req.body;
+  try {
+    await updatePlayerScores(roomCode);
+    const scores = await getRanking(roomCode);
+    res.json(scores);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Score update failed");
+  }
+});
+
 app.get("/ready/:roomCode", async (req, res) => {
   try {
     const ready = await allSubmitted(req.params.roomCode);
@@ -132,13 +147,15 @@ app.get("/voting-complete/:roomCode", async (req, res) => {
   }
 });
 
-app.get("/scores/:roomCode", async (req, res) => {
+app.get("/ranking/:roomCode", async (req, res) => {
+  const { roomCode } = req.params;
   try {
-    const scores = await getScores(req.params.roomCode);
+    await updatePlayerScores(roomCode);
+    const scores = await getRanking(roomCode);
     res.json(scores);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error fetching scores");
+    res.status(500).send("Score update failed");
   }
 });
 
@@ -162,6 +179,24 @@ app.get("/round/:roomCode", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Error fetching round");
+  }
+});
+
+app.get("/best-sentences/:roomCode", async (req, res) => {
+  try {
+    const sentences = await getSentences(req.params.roomCode);
+    const emojiPoints = { "😍": 3, "😂": 2, "🤔": 1, "💩": 0 };
+    const withScores = sentences.map((s) => ({
+      ...s,
+      score: (s.votes || []).reduce(
+        (sum, emoji) => sum + (emojiPoints[emoji] || 0),
+        0
+      ),
+    }));
+    res.json(withScores);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching best sentences");
   }
 });
 

@@ -100,6 +100,12 @@ export async function getRound(roomCode: string): Promise<number> {
   return data.round;
 }
 
+export async function getBestSentences(roomCode: string) {
+  const response = await fetch(`http://localhost:3000/best-sentences/${roomCode}`);
+  if (!response.ok) throw new Error("Failed to get best sentences");
+  return await response.json();
+}
+
 
 
 

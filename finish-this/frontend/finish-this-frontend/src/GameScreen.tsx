@@ -12,6 +12,7 @@ import {
   hasEveryoneVoted,
   getRound,
   advanceRound,
+  getBestSentences,
 } from "./api"
 import CountdownBar from "./components/CountdownBar"
 
@@ -47,6 +48,36 @@ function getMedal(index: number): string {
   }
 }
 
+async function updateScores(roomCode: string) {
+  try {
+    const response = await fetch(`http://localhost:3000/calculate-scores`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ roomCode }),
+    })
+    if (!response.ok) {
+      throw new Error("Failed to update scores")
+    }
+  } catch (error) {
+    console.error("Error updating scores:", error)
+  }
+}
+
+async function getRanking(roomCode: string) {
+  try {
+    const response = await fetch(`http://localhost:3000/ranking/${roomCode}`)
+    if (!response.ok) {
+      throw new Error("Failed to get ranking")
+    }
+    return await response.json()
+  } catch (error) {
+    console.error("Error getting ranking:", error)
+    return []
+  }
+}
+
 export default function GameScreen({ nickname, roomCode }: Props) {
   const [starter, setStarter] = useState("")
   const [sentence, setSentence] = useState("")
@@ -54,6 +85,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
   const [showAllSentences, setShowAllSentences] = useState(false)
   const [userVotes, setUserVotes] = useState<{ [key: string]: string }>({})
   const [shuffledSentences, setShuffledSentences] = useState<SentenceEntry[]>([])
+  const [bestSentences, setBestSentences] = useState<SentenceEntry[]>([])
 
   const [gameStarted, setGameStarted] = useState(false)
   const [allVoted, setAllVoted] = useState(false)
@@ -101,14 +133,14 @@ export default function GameScreen({ nickname, roomCode }: Props) {
           const res = await hasEveryoneVoted(roomCode)
           if (res.allVoted) {
             setAllVoted(true)
-            const newScores: Record<string, number> = { ...totalScores }
 
-            const serverSentences = await getSentences(roomCode)
-            serverSentences.forEach(({ author, votes }) => {
-              const score = (votes || []).reduce((sum, emoji) => sum + (emojiPoints[emoji] || 0), 0)
-              newScores[author] = (newScores[author] || 0) + score
+            await updateScores(roomCode)
+
+            const ranking = await getRanking(roomCode)
+            const newScores: Record<string, number> = {}
+            ranking.forEach((player: { nickname: string; total_points: number }) => {
+              newScores[player.nickname] = player.total_points
             })
-
             setTotalScores(newScores)
           }
         }
@@ -124,7 +156,6 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     return () => clearInterval(interval)
   }, [roomCode, starter, showAllSentences, allVoted, round, showPodium, handleNewRound, totalScores])
 
-  // Local countdown ticker
   useEffect(() => {
     if (localCountdown === null) return
     
@@ -216,25 +247,19 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     }
   }
 
+  useEffect(() => {
+    if (showPodium) {
+      getBestSentences(roomCode)
+        .then(setBestSentences)
+        .catch((err) => console.error("Error fetching best sentences:", err))
+    }
+  }, [showPodium, roomCode])
+
   const renderContent = () => {
     if (showPodium) {
-      const sentenceScores = shuffledSentences.map((s) => {
-        const score = (s.votes || []).reduce((sum, emoji) => sum + (emojiPoints[emoji] || 0), 0)
-        return { ...s, score }
-      })
+      const sortedSentences = [...bestSentences].sort((a, b) => (b.score || 0) - (a.score || 0))
 
-      const sortedSentences = sentenceScores.sort((a, b) => b.score - a.score)
-
-      const totals: Record<string, number> = {}
-      sentenceScores.forEach(({ author, score }) => {
-        totals[author] = (totals[author] || 0) + score
-      })
-
-      const sortedPlayers = Object.entries(totals).sort(([, a], [, b]) => b - a)
-
-      // Finde die besten Sätze (höchste Punktzahl)
-      const maxSentenceScore = Math.max(...sortedSentences.map((s) => s.score))
-      const bestSentenceIds = sortedSentences.filter((s) => s.score === maxSentenceScore).map((s) => s.id)
+      const sortedPlayers = Object.entries(totalScores).sort(([, a], [, b]) => b - a)
 
       return (
         <div className="results-container">
@@ -243,27 +268,26 @@ export default function GameScreen({ nickname, roomCode }: Props) {
           </div>
 
           <div className="results-section">
-            <h3 className="section-title">🏆 Best Sentences</h3>
+            <h3 className="section-title">🏆 Best Sentences (Ranking)</h3>
             <div className="sentence-container">
-              {sortedSentences.map((entry) => {
+              {sortedSentences.map((entry, idx) => {
                 const votes = entry.votes || []
                 const summary = votes.reduce((acc: Record<string, number>, emoji) => {
                   acc[emoji] = (acc[emoji] || 0) + 1
                   return acc
                 }, {})
 
-                const isBestSentence = bestSentenceIds.includes(entry.id)
-
                 return (
-                  <div key={entry.id} className={`sentence-card ${isBestSentence ? "best-sentence" : ""}`}>
+                  <div key={entry.id} className="sentence-card">
                     <div className="sentence-content">
                       <div className="sentence-header">
                         <div className="sentence-text">
-                          <strong>Someone:</strong> {entry.text}
+                          <strong>{idx + 1}.</strong> {entry.text}
                         </div>
-                        <div className="sentence-score">{entry.score} pts</div>
+                        <div className="sentence-score">
+                          <strong>{entry.score} Punkte</strong>
+                        </div>
                       </div>
-
                       {Object.keys(summary).length > 0 && (
                         <div className="vote-summary">
                           {Object.entries(summary).map(([emoji, count]) => (
@@ -274,7 +298,6 @@ export default function GameScreen({ nickname, roomCode }: Props) {
                         </div>
                       )}
                     </div>
-
                     <div className="sentence-author">✍️ {entry.author}</div>
                   </div>
                 )

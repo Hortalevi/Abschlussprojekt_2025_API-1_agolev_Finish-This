@@ -3,4 +3,5 @@ export type SentenceEntry = {
   text: string;
   votes?: string[];
   author: string;
+  score?: number;
 };
