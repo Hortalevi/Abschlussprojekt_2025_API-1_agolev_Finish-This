@@ -1,29 +1,29 @@
 const pool = require("./db");
 
 const starters = [
-  "It all started when...",
-  "The last thing I expected was...",
-  "Before I knew it, the dog had...",
-  "At midnight, something strange happened:",
-  "If I could go back in time, I would...",
-  "No one believed me when I said...",
-  "Everything changed the day I found...",
-  "I never meant to open that door, but...",
-  "The message was clear: run.",
-  "I had one job, and I blew it.",
-  "She whispered something I'll never forget...",
-  "Somewhere between reality and dream, I saw...",
-  "The rain didn't stop for three days.",
-  "They told me not to press the red button.",
-  "I woke up in a place I didn't recognize.",
-  "Just five minutes earlier, and everything would be different.",
-  "We made a deal — one I instantly regretted.",
-  "It was supposed to be a normal Tuesday...",
-  "The silence was louder than any scream.",
-  "They weren't supposed to come back.",
+  "Suddenly, the lights went out, and I heard...",
+
+  "The letter in the mailbox said only one thing:",
+  "Everyone vanished — except me and...",
+  "The robot looked at me and whispered...",
+  "When I touched the mirror, it...",
+  "The stranger handed me a box and said...",
+  "Under the bed, I found something that...",
+  "I thought it was a dream until...",
+  "As the elevator doors opened, I saw...",
+  "My reflection moved before I did.",
+  "I opened the book and the pages...",
+  "Time froze, and I was the only one who...",
+  "He looked exactly like me, except...",
+  "I made a wish, and seconds later...",
+  "The password worked. Now I had access to...",
+  "The treasure map ended at...",
+  "I heard my own voice calling from...",
+  "The rules were simple — until someone broke them.",
+  "It all began with the sound of a ticking clock.",
+  "There was a knock at the door, but no one was there.",
 ];
 
-// Nur beim Raum erstellen verwenden
 async function generateUniqueRoomCode() {
   let roomCode;
   let exists = true;
@@ -36,7 +36,6 @@ async function generateUniqueRoomCode() {
     exists = result.rows.length > 0;
   }
 
-  // Setze round_started_at nur für die erste Runde (Timer)
   const now = new Date();
   await pool.query(
     "INSERT INTO rooms (code, round, starter, created_at, round_started_at) VALUES ($1, $2, $3, $4, $5)",
@@ -47,6 +46,13 @@ async function generateUniqueRoomCode() {
 }
 
 async function addPlayer(roomCode, nickname) {
+  const roomCheck = await pool.query("SELECT 1 FROM rooms WHERE code = $1", [
+    roomCode,
+  ]);
+  if (roomCheck.rows.length === 0) {
+    throw new Error("Room does not exist");
+  }
+
   const playerCheck = await pool.query(
     "SELECT * FROM players WHERE nickname = $1 AND room_code = $2",
     [nickname, roomCode]
@@ -86,11 +92,10 @@ async function getRoomStatus(roomCode) {
   const currentRound = result.rows[0].round;
   const roundStartedAtRaw = result.rows[0].round_started_at;
 
-  // Timer nur in Runde 1
   if (currentRound === 1 && roundStartedAtRaw) {
     const roundStartedAt = new Date(roundStartedAtRaw).getTime();
     const now = Date.now();
-    const countdownMs = 30000; // 30 Sekunden
+    const countdownMs = 30000;
     const countdownEnd = roundStartedAt + countdownMs;
     const remainingMs = Math.max(countdownEnd - now, 0);
     const secondsLeft = Math.floor(remainingMs / 1000);
@@ -103,9 +108,8 @@ async function getRoomStatus(roomCode) {
     };
   }
 
-  // Ab Runde 2: Kein Timer
   return {
-    started: true, // Spiel ist immer "gestartet" ab Runde 2
+    started: true,
     secondsLeft: 0,
     playerCount: await getPlayerCount(roomCode),
     hasTimer: false,
@@ -131,8 +135,6 @@ async function advanceRound(roomCode) {
   const current = await getRound(roomCode);
   if (current >= 7) throw new Error("Max rounds reached");
 
-  // WICHTIG: Setze round_started_at auf NULL für Runden > 1
-  // Nur round und starter werden aktualisiert, KEIN neuer Timer
   await pool.query(
     "UPDATE rooms SET round = $1, starter = NULL, round_started_at = NULL WHERE code = $2",
     [current + 1, roomCode]
@@ -165,7 +167,6 @@ async function voteForSentence(roomCode, sentenceId, voterNickname, emoji) {
 
   const voterId = voter.rows[0].id;
 
-  // Lösche vorherige Stimme für diesen Satz vom gleichen Wähler
   await pool.query(
     "DELETE FROM votes WHERE sentence_id = $1 AND voter_id = $2",
     [sentenceId, voterId]
@@ -182,7 +183,7 @@ async function getSentences(roomCode) {
   const round = await getRound(roomCode);
   const result = await pool.query(
     `SELECT s.id, s.text, p.nickname AS author, s.round, s.room_code,
-            ARRAY_AGG(v.emoji) AS votes
+            ARRAY_REMOVE(ARRAY_AGG(v.emoji), NULL) AS votes
      FROM sentences s
      JOIN players p ON p.id = s.author_id
      LEFT JOIN votes v ON v.sentence_id = s.id
