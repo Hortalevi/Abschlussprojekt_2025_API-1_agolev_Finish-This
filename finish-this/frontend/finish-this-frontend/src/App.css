@@ -64,10 +64,11 @@ body::before {
 }
 
 .form-container {
-  width: 400px;
-  margin: 60px auto;
-  padding: 40px;
-  border-radius: 24px;
+  width: min(400px, 90vw);
+  max-width: 400px;
+  margin: clamp(20px, 5vh, 60px) auto;
+  padding: clamp(24px, 5vw, 40px);
+  border-radius: clamp(16px, 3vw, 24px);
   background: rgba(255, 255, 255, 0.08);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -77,7 +78,6 @@ body::before {
   color: #ffffff;
   text-align: center;
   transition: all 0.3s ease;
-  /* Ensure scrolling works but scrollbar is hidden */
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -94,8 +94,8 @@ body::before {
 }
 
 .form-container h2 {
-  margin-bottom: 32px;
-  font-size: 28px;
+  margin-bottom: clamp(20px, 4vw, 32px);
+  font-size: clamp(20px, 4vw, 28px);
   font-weight: 700;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   background: linear-gradient(135deg, #ffffff, #e0e0e0);
@@ -103,15 +103,16 @@ body::before {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   letter-spacing: -0.5px;
+  line-height: 1.2;
 }
 
 .input-field {
   width: 100%;
-  padding: 16px 20px;
-  margin-bottom: 24px;
+  padding: clamp(12px, 2.5vw, 16px) clamp(16px, 3vw, 20px);
+  margin-bottom: clamp(16px, 3vw, 24px);
   border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  font-size: 16px;
+  border-radius: clamp(8px, 2vw, 12px);
+  font-size: clamp(14px, 2.5vw, 16px);
   font-weight: 500;
   background: rgba(255, 255, 255, 0.95);
   color: #1a1a1a;
@@ -135,18 +136,18 @@ body::before {
 .button-join {
   background: linear-gradient(135deg, #a855f7, #8b5cf6);
   color: white;
-  padding: 16px 32px;
-  font-size: 16px;
+  padding: clamp(12px, 2.5vw, 16px) clamp(24px, 4vw, 32px);
+  font-size: clamp(14px, 2.5vw, 16px);
   font-weight: 600;
   border: none;
-  border-radius: 12px;
+  border-radius: clamp(8px, 2vw, 12px);
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
-  min-width: 140px;
+  min-width: clamp(120px, 20vw, 140px);
 }
 
 .button-join::before {
@@ -200,10 +201,9 @@ body::before {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 40px;
+  padding: clamp(20px, 5vw, 40px);
   color: white;
   box-sizing: border-box;
-  /* Hide scrollbar but allow scrolling */
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -224,11 +224,10 @@ body::before {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 40px;
+  padding: clamp(20px, 5vw, 40px);
   color: white;
   box-sizing: border-box;
   width: 100vw;
-  /* Hide scrollbar but allow scrolling */
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -239,42 +238,170 @@ body::before {
 }
 
 h1 {
-  margin-top: -3vh;
-  margin-bottom: 13vh;
-  font-size: 3.5rem;
+  margin-top: clamp(-2vh, -3vh, -1vh);
+  margin-bottom: clamp(6vh, 13vh, 15vh);
+  font-size: clamp(2rem, 6vw, 3.5rem);
   font-weight: 800;
   background: linear-gradient(135deg, #ffffff, #a855f7, #ec4899);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  letter-spacing: -2px;
+  letter-spacing: clamp(-1px, -0.5vw, -2px);
+  line-height: 1.1;
+  text-align: center;
 }
 
-/* Responsive Design */
-@media screen and (max-width: 480px) {
+/* Enhanced Responsive Design */
+
+/* Large tablets and small desktops */
+@media screen and (max-width: 1024px) {
   .form-container {
-    width: 90%;
-    padding: 32px 24px;
-    margin: 40px auto;
+    width: min(380px, 85vw);
+  }
+
+  body {
+    background-attachment: scroll;
+  }
+
+  .landing-screen,
+  .joined-screen {
+    background-attachment: scroll;
+  }
+}
+
+/* Tablets */
+@media screen and (max-width: 768px) {
+  .form-container {
+    width: min(360px, 80vw);
+    padding: clamp(20px, 4vw, 32px);
   }
 
   h1 {
-    font-size: 2.5rem;
-    margin-bottom: 8vh;
+    margin-bottom: clamp(4vh, 8vh, 10vh);
+  }
+
+  .form-container:hover {
+    transform: none;
+  }
+
+  .button-join:hover {
+    transform: none;
+  }
+
+  .input-field:focus {
+    transform: none;
+  }
+}
+
+/* Mobile devices */
+@media screen and (max-width: 480px) {
+  .form-container {
+    width: min(340px, 90vw);
+    margin: clamp(15px, 3vh, 30px) auto;
+    padding: clamp(16px, 4vw, 24px);
+  }
+
+  h1 {
+    font-size: clamp(1.8rem, 8vw, 2.5rem);
+    margin-bottom: clamp(4vh, 6vh, 8vh);
+    margin-top: clamp(-1vh, -2vh, 0vh);
   }
 
   .form-container h2 {
-    font-size: 24px;
+    font-size: clamp(18px, 5vw, 24px);
+    margin-bottom: clamp(16px, 3vw, 24px);
   }
 
   .input-field {
-    padding: 14px 16px;
-    font-size: 16px;
+    padding: clamp(10px, 3vw, 14px) clamp(12px, 3vw, 16px);
+    font-size: max(16px, 3.5vw);
+    margin-bottom: clamp(12px, 3vw, 18px);
   }
 
   .button-join {
-    padding: 14px 28px;
-    font-size: 15px;
+    padding: clamp(10px, 3vw, 14px) clamp(20px, 4vw, 28px);
+    font-size: max(15px, 3.5vw);
+    min-width: clamp(100px, 25vw, 130px);
+  }
+
+  /* Disable hover effects on mobile */
+  .form-container:hover,
+  .button-join:hover,
+  .input-field:focus {
+    transform: none;
+  }
+}
+
+/* Extra small devices */
+@media screen and (max-width: 360px) {
+  .form-container {
+    width: 95vw;
+    padding: 16px;
+    margin: 10px auto;
+  }
+
+  h1 {
+    font-size: clamp(1.5rem, 9vw, 2rem);
+    letter-spacing: -1px;
+  }
+
+  .form-container h2 {
+    font-size: clamp(16px, 5vw, 20px);
+  }
+}
+
+/* Landscape orientation on mobile */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  h1 {
+    font-size: clamp(1.5rem, 4vh, 2.5rem);
+    margin-bottom: clamp(2vh, 4vh, 6vh);
+    margin-top: 0;
+  }
+
+  .form-container {
+    margin: clamp(10px, 2vh, 20px) auto;
+    padding: clamp(16px, 3vh, 24px);
+  }
+
+  .landing-screen,
+  .joined-screen {
+    padding: clamp(10px, 2vh, 20px);
+  }
+}
+
+/* High DPI displays */
+@media screen and (-webkit-min-device-pixel-ratio: 2),
+  screen and (min-resolution: 192dpi) {
+  .form-container {
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  body::before {
+    background: rgba(15, 15, 35, 0.9);
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .form-container {
+    background: white;
+    border: 1px solid black;
+    box-shadow: none;
+    backdrop-filter: none;
   }
 }

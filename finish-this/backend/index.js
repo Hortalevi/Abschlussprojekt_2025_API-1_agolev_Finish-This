@@ -1,12 +1,21 @@
+const pool = require("./db");
 const express = require("express");
 const cors = require("cors");
 const {
-  rooms,
   addPlayer,
+  createRoom,
+  getRoomStatus,
+  getStarter,
   submitSentence,
+  getSentences,
   voteForSentence,
-  getRoomByCode,
+  allSubmitted,
+  allVoted,
+  getScores,
+  advanceRound,
+  getRound,
 } = require("./room");
+const { generateUniqueRoomCode } = require("./room");
 
 const app = express();
 const PORT = 3000;
@@ -14,228 +23,146 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
-app.post("/join", (req, res) => {
+app.post("/join", async (req, res) => {
   const { roomCode, nickname } = req.body;
   if (!roomCode || !nickname) return res.status(400).send("Missing fields");
 
-  const room = getRoomByCode(roomCode);
-  if (!room) return res.status(404).send("Room not found");
-
-  const existing = room.players.find((p) => p.nickname === nickname);
-  if (!existing) {
-    room.players.push({ nickname, score: 0, submitted: false });
+  try {
+    await addPlayer(roomCode, nickname);
+    res.status(200).send("Joined room");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error joining room");
   }
-
-  res.status(200).send("Joined room");
 });
 
-app.post("/create", (req, res) => {
+app.post("/create", async (req, res) => {
   const { nickname } = req.body;
   if (!nickname) return res.status(400).send("Nickname is required");
 
-  let roomCode;
-  do {
-    roomCode = Math.floor(1000 + Math.random() * 3000).toString();
-  } while (rooms.find((r) => r.roomCode === roomCode));
+  try {
+    const roomCode = await generateUniqueRoomCode();
+    await addPlayer(roomCode, nickname);
 
-  const countdownEnd = Date.now() + 30_000;
-
-  const room = {
-    roomCode,
-    players: [{ nickname, score: 0, submitted: false }],
-    sentences: [],
-    starter: null,
-    countdownEnd,
-    started: false,
-    round: 1,
-  };
-
-  rooms.push(room);
-  res.status(200).json({ roomCode });
+    res.status(200).json({ roomCode });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error creating room");
+  }
 });
 
-app.get("/starter/:roomCode", (req, res) => {
-  const room = getRoomByCode(req.params.roomCode);
-  if (!room) return res.status(404).send("Room not found");
-
-  if (!room.started) {
-    return res.status(400).json({ error: "Game has not started yet" });
+app.get("/starter/:roomCode", async (req, res) => {
+  try {
+    const starter = await getStarter(req.params.roomCode);
+    res.json({ starter });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Could not fetch starter");
   }
-
-  if (!room.starter) {
-    const starters = [
-      "It all started when...",
-      "The last thing I expected was...",
-      "Before I knew it, the dog had...",
-      "At midnight, something strange happened:",
-      "If I could go back in time, I would...",
-    ];
-    room.starter = starters[Math.floor(Math.random() * starters.length)];
-  }
-
-  res.json({ starter: room.starter });
 });
 
-app.get("/status/:roomCode", (req, res) => {
-  const room = getRoomByCode(req.params.roomCode);
-  if (!room) return res.status(404).send("Room not found");
-
-  if (!room.countdownEnd) {
-    room.countdownEnd = Date.now() + 30_000;
-    room.started = false;
+app.get("/status/:roomCode", async (req, res) => {
+  try {
+    const status = await getRoomStatus(req.params.roomCode);
+    res.json(status);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Could not fetch status");
   }
-
-  const now = Date.now();
-  const remainingMs = Math.max(room.countdownEnd - now, 0);
-  const secondsLeft = Math.floor(remainingMs / 1000);
-
-  if (remainingMs === 0 && !room.started) {
-    room.started = true;
-  }
-
-  res.json({
-    started: room.started,
-    secondsLeft,
-    playerCount: room.players.length,
-  });
 });
 
-app.post("/submit", (req, res) => {
+app.post("/submit", async (req, res) => {
   const { roomCode, nickname, sentence } = req.body;
-  const room = getRoomByCode(roomCode);
-  if (!room) return res.status(404).send("Room not found");
+  if (!roomCode || !nickname || !sentence) {
+    return res.status(400).send("Missing fields");
+  }
 
-  const player = room.players.find((p) => p.nickname === nickname);
-  if (!player) return res.status(403).send("Player not in room");
-
-  const id = Date.now().toString();
-
-  room.sentences.push({ id, text: sentence, author: nickname, votes: [] });
-
-  player.submitted = true;
-
-  res.status(200).send("Sentence submitted");
+  try {
+    await submitSentence(roomCode, nickname, sentence);
+    res.status(200).send("Sentence submitted");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error submitting sentence");
+  }
 });
 
-app.post("/vote", (req, res) => {
+app.get("/sentences/:roomCode", async (req, res) => {
+  try {
+    const sentences = await getSentences(req.params.roomCode);
+    res.json(sentences);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching sentences");
+  }
+});
+
+app.post("/vote", async (req, res) => {
   const { roomCode, sentenceId, nickname, emoji } = req.body;
 
   if (!roomCode || !sentenceId || !nickname || !emoji) {
     return res.status(400).send("Missing fields");
   }
 
-  const emojiPoints = {
-    "😍": 3,
-    "😂": 2,
-    "🤔": 1,
-    "💩": 0,
-  };
-
-  if (typeof emoji !== "string" || !(emoji in emojiPoints)) {
-    return res.status(400).send("Invalid emoji");
+  try {
+    await voteForSentence(roomCode, sentenceId, nickname, emoji);
+    res.status(200).send("Vote recorded");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error recording vote");
   }
-
-  const room = getRoomByCode(roomCode);
-  if (!room) {
-    return res.status(404).send("Room not found");
-  }
-
-  const sentence = room.sentences.find((s) => s.id === sentenceId);
-  if (!sentence) {
-    return res.status(404).send("Sentence not found");
-  }
-
-  // Absicherung für votes-Array
-  if (!Array.isArray(sentence.votes)) {
-    sentence.votes = [];
-  }
-
-  sentence.votes.push(emoji);
-
-  const points = emojiPoints[emoji];
-
-  const author = room.players.find((p) => p.nickname === sentence.author);
-  if (author) {
-    author.score = (author.score || 0) + points;
-  }
-
-  const player = room.players.find((p) => p.nickname === nickname);
-  if (player) {
-    player.voted = true;
-  }
-
-  res.status(200).send("Vote recorded");
 });
 
-app.get("/voting-complete/:roomCode", (req, res) => {
-  const room = getRoomByCode(req.params.roomCode);
-  if (!room) return res.status(404).send("Room not found");
-
-  const allVoted = room.players.every((p) => p.voted);
-  res.json({ allVoted });
+app.get("/ready/:roomCode", async (req, res) => {
+  try {
+    const ready = await allSubmitted(req.params.roomCode);
+    res.json({ ready });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error checking ready state");
+  }
 });
 
-app.get("/ready/:roomCode", (req, res) => {
-  const room = getRoomByCode(req.params.roomCode);
-  if (!room) return res.status(404).send("Room not found");
-
-  const allSubmitted = room.players.every((p) => p.submitted);
-  res.json({ ready: allSubmitted });
+app.get("/voting-complete/:roomCode", async (req, res) => {
+  try {
+    const all = await allVoted(req.params.roomCode);
+    res.json({ allVoted: all });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error checking voting state");
+  }
 });
 
-app.get("/sentences/:roomCode", (req, res) => {
-  const room = getRoomByCode(req.params.roomCode);
-  if (!room) return res.status(404).send("Room not found");
-
-  const sentences = room.sentences.map(({ id, text, votes, author }) => ({
-    id,
-    text,
-    votes,
-    author,
-  }));
-
-  res.json(sentences);
+app.get("/scores/:roomCode", async (req, res) => {
+  try {
+    const scores = await getScores(req.params.roomCode);
+    res.json(scores);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching scores");
+  }
 });
 
-app.get("/scores/:roomCode", (req, res) => {
-  const room = getRoomByCode(req.params.roomCode);
-  if (!room) return res.status(404).send("Room not found");
-
-  const scores = room.players.map((p) => ({
-    nickname: p.nickname,
-    score: p.score,
-  }));
-
-  res.json(scores);
-});
-
-app.post("/next-round", (req, res) => {
+app.post("/next-round", async (req, res) => {
   const { roomCode } = req.body;
-  const room = getRoomByCode(roomCode);
-  if (!room) return res.status(404).send("Room not found");
+  if (!roomCode) return res.status(400).send("Missing roomCode");
 
-  const currentRound = room.round || 1;
-
-  if (currentRound >= 7) {
-    return res.status(400).send("Maximum number of rounds reached");
+  try {
+    await advanceRound(roomCode);
+    res.status(200).send("Round advanced");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error advancing round");
   }
-
-  room.round = currentRound + 1;
-  room.sentences = [];
-  room.players.forEach((p) => {
-    p.submitted = false;
-    p.voted = false;
-  });
-  room.starter = null;
-
-  res.status(200).send("Round advanced");
 });
 
-app.get("/round/:roomCode", (req, res) => {
-  const room = getRoomByCode(req.params.roomCode);
-  if (!room) return res.status(404).send("Room not found");
-
-  res.json({ round: room.round || 1 });
+app.get("/round/:roomCode", async (req, res) => {
+  try {
+    const round = await getRound(req.params.roomCode);
+    res.json({ round });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching round");
+  }
 });
 
 app.listen(PORT, () => {
