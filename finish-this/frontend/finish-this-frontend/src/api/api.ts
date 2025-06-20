@@ -1,5 +1,4 @@
-import type { SentenceEntry } from './types';
-
+import type { SentenceEntry } from "../types/types";
 const BASE_URL = "http://localhost:3000";
 
 export async function joinRoom(roomCode: string, nickname: string): Promise<void> {

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import JoinForm from "./JoinForm";
-import WaitingRoom from "./WaitingRoom";
-import GameScreen from "./GameScreen";
+import JoinForm from "./pages/JoinForm/JoinForm";
+import WaitingRoom from "./pages/WaitingRoom/WaitingRoom";
+import GameScreen from "./pages/GameScreen/GameScreen";
 import "./App.css";
 
 function App() {

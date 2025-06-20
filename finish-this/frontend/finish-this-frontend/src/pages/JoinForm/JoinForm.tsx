@@ -1,7 +1,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import { joinRoom, createRoom } from "./api"
+import { joinRoom, createRoom } from "../../api/api"
 import "./JoinForm.css"
 
 interface Props {

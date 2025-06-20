@@ -1,7 +1,6 @@
 import type React from "react"
 import { useEffect, useState, useCallback } from "react"
 import "./GameScreen.css"
-import type { SentenceEntry } from "./types"
 import {
   submitSentence,
   vote,
@@ -12,7 +11,8 @@ import {
   getRound,
   advanceRound,
   getBestSentences,
-} from "./api"
+} from "../../api/api"
+import type { SentenceEntry } from "../../types/types"
 
 const emojis = ["😍", "😂", "🤔", "💩"]
 const emojiPoints: { [emoji: string]: number } = {
