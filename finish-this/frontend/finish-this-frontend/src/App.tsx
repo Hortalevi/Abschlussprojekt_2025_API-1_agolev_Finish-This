@@ -1,12 +1,14 @@
-import { useState } from 'react';
-import JoinForm from './JoinForm';
-import GameScreen from './GameScreen';
-import './App.css';
+import { useState } from "react";
+import JoinForm from "./JoinForm";
+import WaitingRoom from "./WaitingRoom";
+import GameScreen from "./GameScreen";
+import "./App.css";
 
 function App() {
-  const [nickname, setNickname] = useState('');
-  const [roomCode, setRoomCode] = useState('');
+  const [nickname, setNickname] = useState("");
+  const [roomCode, setRoomCode] = useState("");
   const [joined, setJoined] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
 
   const handleJoin = (name: string, room: string) => {
     setNickname(name);
@@ -15,10 +17,15 @@ function App() {
   };
 
   return (
-    <div className={joined ? 'joined-screen' : 'landing-screen'}>
-      <h1>Finish This!</h1>
+    <div className="main-container">
       {!joined ? (
         <JoinForm onJoin={handleJoin} />
+      ) : !gameStarted ? (
+        <WaitingRoom
+          nickname={nickname}
+          roomCode={roomCode}
+          onGameStart={() => setGameStarted(true)}
+        />
       ) : (
         <GameScreen nickname={nickname} roomCode={roomCode} />
       )}

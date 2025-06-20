@@ -8,13 +8,11 @@ import {
   getSentences,
   isRoomReady,
   getStarter,
-  getRoomStatus,
   hasEveryoneVoted,
   getRound,
   advanceRound,
   getBestSentences,
 } from "./api"
-import CountdownBar from "./components/CountdownBar"
 
 const emojis = ["😍", "😂", "🤔", "💩"]
 const emojiPoints: { [emoji: string]: number } = {
@@ -27,12 +25,6 @@ const emojiPoints: { [emoji: string]: number } = {
 interface Props {
   readonly nickname: string
   readonly roomCode: string
-}
-
-function formatTime(seconds: number): string {
-  const m = Math.floor(seconds / 60)
-  const s = seconds % 60
-  return `${m}:${s.toString().padStart(2, "0")}`
 }
 
 function getMedal(index: number): string {
@@ -87,14 +79,12 @@ export default function GameScreen({ nickname, roomCode }: Props) {
   const [shuffledSentences, setShuffledSentences] = useState<SentenceEntry[]>([])
   const [bestSentences, setBestSentences] = useState<SentenceEntry[]>([])
 
-  const [gameStarted, setGameStarted] = useState(false)
   const [allVoted, setAllVoted] = useState(false)
   const [round, setRound] = useState<number>(1)
   const [isLoading, setIsLoading] = useState(false)
-  const [pollIntervalId, setPollIntervalId] = useState<NodeJS.Timeout | null>(null)
+  const [pollIntervalId, setPollIntervalId] = useState<ReturnType<typeof setInterval> | null>(null)
   const [showPodium, setShowPodium] = useState(false)
   const [totalScores, setTotalScores] = useState<Record<string, number>>({})
-  const [localCountdown, setLocalCountdown] = useState<number | null>(null)
 
   const handleNewRound = useCallback(async () => {
     setSentence("")
@@ -114,17 +104,13 @@ export default function GameScreen({ nickname, roomCode }: Props) {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const status = await getRoomStatus(roomCode)
-        setLocalCountdown(status.secondsLeft)
-        setGameStarted(status.started)
-
         const currentRound = await getRound(roomCode)
         if (currentRound !== round) {
           setRound(currentRound)
           await handleNewRound()
         }
 
-        if (status.started && !starter) {
+        if (!starter) {
           const res = await getStarter(roomCode)
           setStarter(res.starter)
         }
@@ -155,16 +141,6 @@ export default function GameScreen({ nickname, roomCode }: Props) {
 
     return () => clearInterval(interval)
   }, [roomCode, starter, showAllSentences, allVoted, round, showPodium, handleNewRound, totalScores])
-
-  useEffect(() => {
-    if (localCountdown === null) return
-    
-    const timer = setInterval(() => {
-      setLocalCountdown((prev) => (prev !== null && prev > 0 ? prev - 1 : 0))
-    }, 1000)
-    
-    return () => clearInterval(timer)
-  }, [localCountdown])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -255,9 +231,24 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     }
   }, [showPodium, roomCode])
 
+  function getBestSentencePerPlayer(sentences: SentenceEntry[]) {
+    // Map: author -> best sentence
+    const bestMap: { [author: string]: SentenceEntry } = {}
+
+    for (const s of sentences) {
+      const score = s.score ?? 0
+      if (!bestMap[s.author] || (bestMap[s.author].score ?? 0) < score) {
+        bestMap[s.author] = s
+      }
+    }
+
+    // Rückgabe: Array der besten Sentences, sortiert nach Score (absteigend!)
+    return Object.values(bestMap).sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+  }
+
   const renderContent = () => {
     if (showPodium) {
-      const sortedSentences = [...bestSentences].sort((a, b) => (b.score || 0) - (a.score || 0))
+      const sortedSentences = getBestSentencePerPlayer(bestSentences)
 
       const sortedPlayers = Object.entries(totalScores).sort(([, a], [, b]) => b - a)
 
@@ -451,19 +442,6 @@ export default function GameScreen({ nickname, roomCode }: Props) {
             </div>
           </div>
         )}
-      </div>
-    )
-  }
-
-  if (!gameStarted) {
-    return (
-      <div className="form-container-GameScreen">
-        <h2>Waiting for other players...</h2>
-        <p>
-          Game will start in <strong>{localCountdown !== null ? formatTime(localCountdown) : "..."}</strong>
-        </p>
-        {localCountdown !== null && <CountdownBar secondsLeft={localCountdown} totalSeconds={30} />}
-        <p className="game-info">Room: {roomCode}</p>
       </div>
     )
   }
