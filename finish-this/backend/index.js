@@ -13,6 +13,9 @@ const {
   allVoted,
   advanceRound,
   getRound,
+  setCountdownNow,
+  isHost,
+  forceStart,
 } = require("./room");
 const {
   generateUniqueRoomCode,
@@ -44,7 +47,7 @@ app.post("/create", async (req, res) => {
   if (!nickname) return res.status(400).send("Nickname is required");
 
   try {
-    const roomCode = await generateUniqueRoomCode();
+    const roomCode = await generateUniqueRoomCode(nickname); // Pass nickname as host
     await addPlayer(roomCode, nickname);
 
     res.status(200).json({ roomCode });
@@ -197,6 +200,37 @@ app.get("/best-sentences/:roomCode", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Error fetching best sentences");
+  }
+});
+
+app.post("/room/:roomCode/start-countdown", async (req, res) => {
+  try {
+    await setCountdownNow(req.params.roomCode);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post("/room/:roomCode/force-start", async (req, res) => {
+  const { nickname } = req.body;
+  console.log("Force start request:", req.params.roomCode, nickname);
+  const isHostUser = await isHost(req.params.roomCode, nickname);
+  console.log("isHost result:", isHostUser);
+  if (isHostUser) {
+    await forceStart(req.params.roomCode); // <--- use forceStart here!
+    res.json({ ok: true });
+  } else {
+    res.status(403).json({ error: "Only host can force start" });
+  }
+});
+
+app.get("/room/:roomCode/is-host/:nickname", async (req, res) => {
+  try {
+    const host = await isHost(req.params.roomCode, req.params.nickname);
+    res.json({ isHost: host });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
 });
 

@@ -2,7 +2,6 @@ const pool = require("./db");
 
 const starters = [
   "Suddenly, the lights went out, and I heard...",
-
   "The letter in the mailbox said only one thing:",
   "Everyone vanished — except me and...",
   "The robot looked at me and whispered...",
@@ -24,7 +23,7 @@ const starters = [
   "There was a knock at the door, but no one was there.",
 ];
 
-async function generateUniqueRoomCode() {
+async function generateUniqueRoomCode(hostNickname) {
   let roomCode;
   let exists = true;
 
@@ -38,8 +37,8 @@ async function generateUniqueRoomCode() {
 
   const now = new Date();
   await pool.query(
-    "INSERT INTO rooms (code, round, starter, created_at, round_started_at) VALUES ($1, $2, $3, $4, $5)",
-    [roomCode, 1, null, now, now]
+    "INSERT INTO rooms (code, round, starter, created_at, round_started_at, host_nickname, countdown_started_at) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+    [roomCode, 1, null, now, now, hostNickname, null]
   );
 
   return roomCode;
@@ -84,21 +83,31 @@ async function getStarter(roomCode) {
 
 async function getRoomStatus(roomCode) {
   const result = await pool.query(
-    "SELECT round_started_at, round FROM rooms WHERE code = $1",
+    "SELECT countdown_started_at, round FROM rooms WHERE code = $1",
     [roomCode]
   );
   if (result.rows.length === 0) throw new Error("Room not found");
 
   const currentRound = result.rows[0].round;
-  const roundStartedAtRaw = result.rows[0].round_started_at;
+  const countdownStartedAtRaw = result.rows[0].countdown_started_at;
 
-  if (currentRound === 1 && roundStartedAtRaw) {
-    const roundStartedAt = new Date(roundStartedAtRaw).getTime();
+  if (currentRound === 1 && countdownStartedAtRaw) {
+    const countdownStartedAt = new Date(countdownStartedAtRaw).getTime();
     const now = Date.now();
-    const countdownMs = 30000;
-    const countdownEnd = roundStartedAt + countdownMs;
+    const countdownMs = 60000;
+    const countdownEnd = countdownStartedAt + countdownMs;
     const remainingMs = Math.max(countdownEnd - now, 0);
     const secondsLeft = Math.floor(remainingMs / 1000);
+
+    // Debug-Log
+    console.log({
+      countdownStartedAtRaw,
+      countdownStartedAt,
+      now,
+      countdownEnd,
+      remainingMs,
+      secondsLeft,
+    });
 
     return {
       started: remainingMs === 0,
@@ -136,7 +145,7 @@ async function advanceRound(roomCode) {
   if (current >= 7) throw new Error("Max rounds reached");
 
   await pool.query(
-    "UPDATE rooms SET round = $1, starter = NULL, round_started_at = NULL WHERE code = $2",
+    "UPDATE rooms SET round = $1, starter = NULL, round_started_at = NULL, countdown_started_at = NULL WHERE code = $2",
     [current + 1, roomCode]
   );
 }
@@ -172,7 +181,6 @@ async function voteForSentence(roomCode, sentenceId, voterNickname, emoji) {
     [sentenceId, voterId]
   );
 
-  // Füge neue Stimme hinzu
   await pool.query(
     "INSERT INTO votes (sentence_id, voter_id, emoji) VALUES ($1, $2, $3)",
     [sentenceId, voterId, emoji]
@@ -276,6 +284,31 @@ async function allVoted(roomCode) {
   return totalVoted === totalPlayers;
 }
 
+async function setCountdownNow(roomCode) {
+  const now = new Date();
+  await pool.query(
+    "UPDATE rooms SET countdown_started_at = $1 WHERE code = $2 AND countdown_started_at IS NULL",
+    [now, roomCode]
+  );
+}
+
+async function isHost(roomCode, nickname) {
+  const res = await pool.query(
+    "SELECT host_nickname FROM rooms WHERE code = $1",
+    [roomCode]
+  );
+  return res.rows[0]?.host_nickname === nickname;
+}
+
+async function forceStart(roomCode) {
+  // Set countdown_started_at to 60 seconds ago
+  const now = new Date(Date.now() - 60000);
+  await pool.query(
+    "UPDATE rooms SET countdown_started_at = $1 WHERE code = $2",
+    [now, roomCode]
+  );
+}
+
 module.exports = {
   generateUniqueRoomCode,
   addPlayer,
@@ -290,4 +323,7 @@ module.exports = {
   advanceRound,
   allSubmitted,
   allVoted,
+  setCountdownNow,
+  isHost,
+  forceStart,
 };

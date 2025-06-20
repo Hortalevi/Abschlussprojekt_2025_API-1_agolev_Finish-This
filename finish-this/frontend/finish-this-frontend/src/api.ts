@@ -39,6 +39,7 @@ export async function getRoomStatus(roomCode: string): Promise<{
   started: boolean;
   secondsLeft: number;
   playerCount: number;
+  hasTimer: boolean;
 }> {
   const res = await fetch(`${BASE_URL}/status/${roomCode}`);
   if (!res.ok) throw new Error("Failed to fetch room status");
@@ -104,6 +105,24 @@ export async function getBestSentences(roomCode: string) {
   const response = await fetch(`http://localhost:3000/best-sentences/${roomCode}`);
   if (!response.ok) throw new Error("Failed to get best sentences");
   return await response.json();
+}
+
+export async function startGameCountdown(roomCode: string) {
+  await fetch(`http://localhost:3000/room/${roomCode}/start-countdown`, { method: "POST" });
+}
+
+export async function forceStartGame(roomCode: string, nickname: string) {
+  await fetch(`http://localhost:3000/room/${roomCode}/force-start`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nickname }),
+  });
+}
+
+export async function isHost(roomCode: string, nickname: string): Promise<boolean> {
+  const res = await fetch(`http://localhost:3000/room/${roomCode}/is-host/${nickname}`);
+  const data = await res.json();
+  return data.isHost;
 }
 
 
