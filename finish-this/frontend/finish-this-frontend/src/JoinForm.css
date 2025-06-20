@@ -132,16 +132,18 @@
 }
 
 .main-title {
-  font-size: clamp(18px, 5vw, 28px);
-  font-weight: 800;
+  font-size: clamp(22px, 6vw, 32px);
+  font-weight: 900;
   margin-bottom: 6px;
-  background: linear-gradient(135deg, #ffffff, #a855f7, #ec4899);
+  background: linear-gradient(90deg, #fff 40%, #a855f7 80%, #ec4899 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 12px #a855f7cc, 0 0 2px #fff, 0 1px 0 #fff,
+    0 0 8px #a855f766;
   letter-spacing: -0.5px;
   line-height: 1.1;
+  filter: drop-shadow(0 2px 8px #a855f7cc);
 }
 
 .main-subtitle {
