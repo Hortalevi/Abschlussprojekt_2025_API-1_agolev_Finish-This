@@ -99,16 +99,6 @@ async function getRoomStatus(roomCode) {
     const remainingMs = Math.max(countdownEnd - now, 0);
     const secondsLeft = Math.floor(remainingMs / 1000);
 
-    // Debug-Log
-    console.log({
-      countdownStartedAtRaw,
-      countdownStartedAt,
-      now,
-      countdownEnd,
-      remainingMs,
-      secondsLeft,
-    });
-
     return {
       started: remainingMs === 0,
       secondsLeft,
@@ -199,6 +189,21 @@ async function getSentences(roomCode) {
      GROUP BY s.id, p.nickname
      ORDER BY s.id`,
     [roomCode, round]
+  );
+  return result.rows;
+}
+
+async function getAllSentences(roomCode) {
+  const result = await pool.query(
+    `SELECT s.id, s.text, p.nickname AS author, s.round, s.room_code,
+            ARRAY_REMOVE(ARRAY_AGG(v.emoji), NULL) AS votes
+     FROM sentences s
+     JOIN players p ON p.id = s.author_id
+     LEFT JOIN votes v ON v.sentence_id = s.id
+     WHERE s.room_code = $1
+     GROUP BY s.id, p.nickname
+     ORDER BY s.id`,
+    [roomCode]
   );
   return result.rows;
 }
@@ -301,7 +306,6 @@ async function isHost(roomCode, nickname) {
 }
 
 async function forceStart(roomCode) {
-  // Set countdown_started_at to 60 seconds ago
   const now = new Date(Date.now() - 60000);
   await pool.query(
     "UPDATE rooms SET countdown_started_at = $1 WHERE code = $2",
@@ -326,4 +330,5 @@ module.exports = {
   setCountdownNow,
   isHost,
   forceStart,
+  getAllSentences,
 };

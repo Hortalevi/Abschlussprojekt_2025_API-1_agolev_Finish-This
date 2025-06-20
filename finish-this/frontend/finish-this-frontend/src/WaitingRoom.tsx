@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getRoomStatus, startGameCountdown, isHost, forceStartGame } from "./api";
 import CountdownBar from "./components/CountdownBar";
+import "./WaitingRoom.css"
 
 type WaitingRoomProps = {
   nickname: string;
@@ -23,12 +24,10 @@ const WaitingRoom: React.FC<WaitingRoomProps> = ({ nickname, roomCode, onGameSta
       setPlayerCount(status.playerCount);
       setCountdown(status.hasTimer ? status.secondsLeft : null);
 
-      // Host starts countdown if needed
       if (host && status.playerCount >= 2 && !status.hasTimer) {
         await startGameCountdown(roomCode);
       }
 
-      // ALL players (including host) switch to GameScreen when started
       if (status.started && status.hasTimer) {
         onGameStart();
       }
@@ -41,26 +40,32 @@ const WaitingRoom: React.FC<WaitingRoomProps> = ({ nickname, roomCode, onGameSta
   };
 
   return (
-    <div className="form-container-GameScreen">
-      <h2>Waiting Room: {roomCode}</h2>
-      <p>
-        Players: <strong>{playerCount}</strong> (2+ required)
-      </p>
-      {playerCount < 2 && <p>Waiting for more players to join...</p>}
+    <div className="form-container-GameScreen waiting-room-bg">
+      <h2 className="waiting-room-title">Waiting Room: {roomCode}</h2>
+      <div className="waiting-room-info">
+        Players: <span className="waiting-room-players">{playerCount}</span> (2+ required)
+      </div>
+      {playerCount < 2 && (
+        <div className="waiting-room-info">Waiting for more players to join...</div>
+      )}
       {countdown !== null && (
         <>
-          <p>
+          <div className="waiting-room-countdown">
             Game starts in <strong>{countdown}s</strong>
-          </p>
-          <CountdownBar secondsLeft={countdown} totalSeconds={60} />
+          </div>
+          <div className="waiting-room-bar">
+            <CountdownBar secondsLeft={countdown} totalSeconds={60} />
+          </div>
         </>
       )}
       {host && playerCount >= 2 && (
-        <button onClick={handleForceStart}>
+        <button className="waiting-room-force-btn" onClick={handleForceStart}>
           Start Game Now (Host)
         </button>
       )}
-      <p className="game-info">Share this code to invite friends!</p>
+      <div className="waiting-room-invite">
+        Share this code to invite friends!
+      </div>
     </div>
   );
 };

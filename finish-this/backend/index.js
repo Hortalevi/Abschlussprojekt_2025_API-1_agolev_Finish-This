@@ -16,6 +16,7 @@ const {
   setCountdownNow,
   isHost,
   forceStart,
+  getAllSentences,
 } = require("./room");
 const {
   generateUniqueRoomCode,
@@ -187,7 +188,7 @@ app.get("/round/:roomCode", async (req, res) => {
 
 app.get("/best-sentences/:roomCode", async (req, res) => {
   try {
-    const sentences = await getSentences(req.params.roomCode);
+    const sentences = await getAllSentences(req.params.roomCode); // <-- das ist wichtig!
     const emojiPoints = { "😍": 3, "😂": 2, "🤔": 1, "💩": 0 };
     const withScores = sentences.map((s) => ({
       ...s,
@@ -196,6 +197,8 @@ app.get("/best-sentences/:roomCode", async (req, res) => {
         0
       ),
     }));
+    // Nach Punkten sortieren (höchste zuerst)
+    withScores.sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
     res.json(withScores);
   } catch (err) {
     console.error(err);

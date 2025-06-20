@@ -231,24 +231,10 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     }
   }, [showPodium, roomCode])
 
-  function getBestSentencePerPlayer(sentences: SentenceEntry[]) {
-    // Map: author -> best sentence
-    const bestMap: { [author: string]: SentenceEntry } = {}
-
-    for (const s of sentences) {
-      const score = s.score ?? 0
-      if (!bestMap[s.author] || (bestMap[s.author].score ?? 0) < score) {
-        bestMap[s.author] = s
-      }
-    }
-
-    // Rückgabe: Array der besten Sentences, sortiert nach Score (absteigend!)
-    return Object.values(bestMap).sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
-  }
-
   const renderContent = () => {
     if (showPodium) {
-      const sortedSentences = getBestSentencePerPlayer(bestSentences)
+      console.log("Best sentences from backend:", bestSentences);
+      const sortedSentences = [...bestSentences].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
 
       const sortedPlayers = Object.entries(totalScores).sort(([, a], [, b]) => b - a)
 
