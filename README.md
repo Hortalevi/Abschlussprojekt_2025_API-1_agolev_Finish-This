@@ -2,7 +2,7 @@ Finish This! -- Multiplayer Sentence Ending Game
 ===============================================
 
 Description:\
-"Finish This!" is a web-based multiplayer game where players receive a random sentence starter and must creatively complete it. All sentence endings are then anonymously displayed and voted on using emojis. The player with the most points at the end wins.
+“Finish This!” is a web-based multiplayer game where players receive a random sentence starter and must creatively complete it. All sentence endings are then displayed anonymously and voted on using emojis. The player with the most points at the end wins.
 
 Project Structure:
 
@@ -40,17 +40,15 @@ Project Goals:
 
 Milestones:
 
-1.  UI for joining a game session
+1.  Build the basic structure (setup, flow, input)
 
-2.  Display sentence starters
+2.  Implement emoji voting and score calculation
 
-3.  Submit sentence endings
+3.  Improve visuals and finish full game flow
 
-4.  Show all endings & vote
+4.  Daily documentation and final presentation
 
-5.  Calculate points & leaderboard
-
-6.  Presentation-ready demo with clean UI and logic
+5.  Additional features
 
 How to Start (Development):\
 Backend:
@@ -59,11 +57,13 @@ Backend:
 
 -   Run `npm install`
 
--   Start server: `npm start`
+-   Navigate to `cd src`
+
+-   Start server: `node index.js`
 
 Frontend:
 
--   Navigate to `/frontend`
+-   Navigate to `/frontend/finish-this-frontend`
 
 -   Run `npm install`
 
@@ -88,4 +88,4 @@ Levi Agostinho Horta\
 Apprenticeship: Applikationsentwickler\
 Company: AdnovumAG\
 Date: 25.06.2025\
-Version: 1.0
+Version: 1.8

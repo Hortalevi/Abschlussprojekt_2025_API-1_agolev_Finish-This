@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getRoomStatus, startGameCountdown, isHost, forceStartGame } from "./api";
-import CountdownBar from "./components/CountdownBar";
+import { getRoomStatus, startGameCountdown, isHost, forceStartGame } from "../../api/api";
+import CountdownBar from "../../components/CountdownBar/CountdownBar";
 import "./WaitingRoom.css"
 
 type WaitingRoomProps = {
