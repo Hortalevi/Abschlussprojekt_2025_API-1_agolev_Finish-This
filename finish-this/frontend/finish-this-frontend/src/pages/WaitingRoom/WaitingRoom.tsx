@@ -1,3 +1,11 @@
+/**
+ * @ Author: Your name
+ * @ Create Time: 2025-06-20 08:59:56
+ * @ Modified by: Your name
+ * @ Modified time: 2025-06-23 16:09:05
+ * @ Description:
+ */
+
 import { useEffect, useState } from "react";
 import { getRoomStatus, startGameCountdown, isHost, forceStartGame, getPlayers } from "../../api/api";
 import CountdownBar from "../../components/CountdownBar/CountdownBar";

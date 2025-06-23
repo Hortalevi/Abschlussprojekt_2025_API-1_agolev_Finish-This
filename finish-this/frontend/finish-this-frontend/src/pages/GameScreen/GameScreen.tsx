@@ -1,3 +1,12 @@
+/**
+ * @ Author: Levi Agostinho Horta
+ * @ Create Time: 2025-06-03 08:51:02
+ * @ Modified by: Your name
+ * @ Modified time: 2025-06-23 16:17:34
+ * @ Description: Game-Screen so that Players can play the Game, this is per say the main function of the code
+ * * @ Sources: Chatgpt and Claude AI, for Problems and Questions
+ */
+
 import type React from "react"
 import { useEffect, useState, useCallback } from "react"
 import "./GameScreen.css"

@@ -1,3 +1,12 @@
+/**
+ * @ Author: Levi Agostinho Horta
+ * @ Create Time: 2025-06-02 14:39:59
+ * @ Modified by: Your name
+ * @ Modified time: 2025-06-23 16:20:12
+ * @ Description: Form at the Start of the Game, so that Players can join a Lobby
+ * @ Sources: Chatgpt and Claude AI, for Problems and Questions.
+ */
+
 import type React from "react"
 
 import { useState } from "react"

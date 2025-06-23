@@ -1,3 +1,12 @@
+/**
+ * @ Author: Levi Agostinho Horta
+ * @ Create Time: 2025-06-20 14:49:01
+ * @ Modified by: Your name
+ * @ Modified time: 2025-06-23 16:40:05
+ * @ Description: Has the main Function of the Backend and calls almost all Endpoints
+ * @ Sources: Chatgpt and Claude AI, for Problems and Questions.
+ */
+
 const pool = require("./db");
 const express = require("express");
 const cors = require("cors");
