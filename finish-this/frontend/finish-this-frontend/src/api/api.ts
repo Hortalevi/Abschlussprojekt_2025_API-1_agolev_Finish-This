@@ -123,6 +123,11 @@ export async function isHost(roomCode: string, nickname: string): Promise<boolea
   return data.isHost;
 }
 
+export async function getPlayers(roomCode: string): Promise<string[]> {
+  const res = await fetch(`${BASE_URL}players/${roomCode}`);
+  if (!res.ok) throw new Error("Failed to get players");
+  return await res.json();
+}
 
 
 

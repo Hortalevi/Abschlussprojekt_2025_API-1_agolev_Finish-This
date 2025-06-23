@@ -18,9 +18,8 @@ const starters = [
   "The password worked. Now I had access to...",
   "The treasure map ended at...",
   "I heard my own voice calling from...",
-  "The rules were simple — until someone broke them.",
-  "It all began with the sound of a ticking clock.",
-  "There was a knock at the door, but no one was there.",
+  "The rules were simple...",
+  "There was a knock at the door...",
 ];
 
 async function generateUniqueRoomCode(hostNickname) {
