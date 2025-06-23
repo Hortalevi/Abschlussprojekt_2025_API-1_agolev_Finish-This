@@ -1,3 +1,11 @@
+/**
+ * @ Author: Levi Agostinho Horta
+ * @ Create Time: 2025-06-18 10:39:18
+ * @ Modified by: Your name
+ * @ Modified time: 2025-06-23 16:37:21
+ * @ Description: Connects the Game with the Database PostgreSQL
+ */
+
 const { Pool } = require("pg");
 
 let pool;
