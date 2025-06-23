@@ -100,17 +100,17 @@ export async function getRound(roomCode: string): Promise<number> {
 }
 
 export async function getBestSentences(roomCode: string) {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/best-sentences/${roomCode}`);
+  const response = await fetch(`${BASE_URL}/best-sentences/${roomCode}`);
   if (!response.ok) throw new Error("Failed to get best sentences");
   return await response.json();
 }
 
 export async function startGameCountdown(roomCode: string) {
-  await fetch(`${import.meta.env.VITE_API_URL}/room/${roomCode}/start-countdown`, { method: "POST" });
+  await fetch(`${BASE_URL}/room/${roomCode}/start-countdown`, { method: "POST" });
 }
 
 export async function forceStartGame(roomCode: string, nickname: string) {
-  await fetch(`${import.meta.env.VITE_API_URL}/room/${roomCode}/force-start`, {
+  await fetch(`${BASE_URL}/room/${roomCode}/force-start`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ nickname }),
@@ -118,13 +118,13 @@ export async function forceStartGame(roomCode: string, nickname: string) {
 }
 
 export async function isHost(roomCode: string, nickname: string): Promise<boolean> {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/room/${roomCode}/is-host/${nickname}`);
+  const res = await fetch(`${BASE_URL}/room/${roomCode}/is-host/${nickname}`);
   const data = await res.json();
   return data.isHost;
 }
 
 export async function getPlayers(roomCode: string): Promise<string[]> {
-  const res = await fetch(`${BASE_URL}players/${roomCode}`);
+  const res = await fetch(`${BASE_URL}/players/${roomCode}`);
   if (!res.ok) throw new Error("Failed to get players");
   return await res.json();
 }
