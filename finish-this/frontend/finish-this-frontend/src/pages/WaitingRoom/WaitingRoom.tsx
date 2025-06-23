@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getRoomStatus, startGameCountdown, isHost, forceStartGame } from "../../api/api";
+import { getRoomStatus, startGameCountdown, isHost, forceStartGame, getPlayers } from "../../api/api";
 import CountdownBar from "../../components/CountdownBar/CountdownBar";
 import "./WaitingRoom.css"
 
@@ -13,6 +13,7 @@ const WaitingRoom: React.FC<WaitingRoomProps> = ({ nickname, roomCode, onGameSta
   const [playerCount, setPlayerCount] = useState(1);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [host, setHost] = useState(false);
+  const [players, setPlayers] = useState<string[]>([]);
 
   useEffect(() => {
     isHost(roomCode, nickname).then(setHost);
@@ -23,6 +24,12 @@ const WaitingRoom: React.FC<WaitingRoomProps> = ({ nickname, roomCode, onGameSta
       const status = await getRoomStatus(roomCode);
       setPlayerCount(status.playerCount);
       setCountdown(status.hasTimer ? status.secondsLeft : null);
+
+
+      try {
+        const playerList = await getPlayers(roomCode);
+        setPlayers(playerList);
+      } catch { /* empty */ }
 
       if (host && status.playerCount >= 2 && !status.hasTimer) {
         await startGameCountdown(roomCode);
@@ -56,6 +63,11 @@ const WaitingRoom: React.FC<WaitingRoomProps> = ({ nickname, roomCode, onGameSta
           <div className="waiting-room-bar">
             <CountdownBar secondsLeft={countdown} totalSeconds={60} />
           </div>
+          <ul className="waiting-room-player-list">
+            {players.map(name => (
+              <li key={name}>{name}</li>
+            ))}
+          </ul>
         </>
       )}
       {host && playerCount >= 2 && (

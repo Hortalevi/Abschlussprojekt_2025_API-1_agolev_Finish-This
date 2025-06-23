@@ -236,6 +236,18 @@ app.get("/room/:roomCode/is-host/:nickname", async (req, res) => {
   }
 });
 
+app.get("/players/:roomCode", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT nickname FROM players WHERE room_code = $1",
+      [req.params.roomCode]
+    );
+    res.json(result.rows.map((r) => r.nickname));
+  } catch {
+    res.status(500).send("Error fetching players");
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
