@@ -63,13 +63,13 @@ const WaitingRoom: React.FC<WaitingRoomProps> = ({ nickname, roomCode, onGameSta
           <div className="waiting-room-bar">
             <CountdownBar secondsLeft={countdown} totalSeconds={60} />
           </div>
-          <ul className="waiting-room-player-list">
-            {players.map(name => (
-              <li key={name}>{name}</li>
-            ))}
-          </ul>
         </>
       )}
+      <ul className="waiting-room-player-list">
+        {players.map(name => (
+          <li key={name}>{name}</li>
+        ))}
+      </ul>
       {host && playerCount >= 2 && (
         <button className="waiting-room-force-btn" onClick={handleForceStart}>
           Start Game Now (Host)
