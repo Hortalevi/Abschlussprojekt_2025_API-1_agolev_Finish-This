@@ -1,5 +1,5 @@
 import type { SentenceEntry } from "../types/types";
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "${import.meta.env.VITE_API_URL}";
 
 export async function joinRoom(roomCode: string, nickname: string): Promise<void> {
   const res = await fetch(`${BASE_URL}/join`, {
