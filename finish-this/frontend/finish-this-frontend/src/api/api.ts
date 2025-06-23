@@ -1,5 +1,5 @@
 import type { SentenceEntry } from "../types/types";
-const BASE_URL = "${import.meta.env.VITE_API_URL}/";
+const BASE_URL = `${import.meta.env.VITE_API_URL}/`;
 
 export async function joinRoom(roomCode: string, nickname: string): Promise<void> {
   const res = await fetch(`${BASE_URL}/join`, {
@@ -71,7 +71,6 @@ export async function getScores(roomCode: string): Promise<{ nickname: string; s
   if (!res.ok) throw new Error("Failed to fetch scores");
   return res.json();
 }
-
 
 export async function getStarter(roomCode: string): Promise<{ starter: string }> {
   const res = await fetch(`${BASE_URL}/starter/${roomCode}`);
