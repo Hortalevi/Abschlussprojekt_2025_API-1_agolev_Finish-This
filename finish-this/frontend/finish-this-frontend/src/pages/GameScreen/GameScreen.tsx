@@ -42,7 +42,7 @@ function getMedal(index: number): string {
 
 async function updateScores(roomCode: string) {
   try {
-    const response = await fetch(`http://localhost:3000/calculate-scores`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/calculate-scores`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -59,7 +59,7 @@ async function updateScores(roomCode: string) {
 
 async function getRanking(roomCode: string) {
   try {
-    const response = await fetch(`http://localhost:3000/ranking/${roomCode}`)
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/ranking/${roomCode}`)
     if (!response.ok) {
       throw new Error("Failed to get ranking")
     }
