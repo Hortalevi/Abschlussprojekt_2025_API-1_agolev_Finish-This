@@ -1,3 +1,12 @@
+/**
+ * @ Author: Levi Agostinho Horta
+ * @ Create Time: 2025-06-20 14:49:01
+ * @ Modified by: Levi Agostinho Horta
+ * @ Modified time: 2025-06-24 15:18:05
+ * @ Description: Has all the needed function for a Room
+ * @ Sources: Chatgpt and Claude AI, for Problems and Questions.
+ */
+
 const pool = require("./db");
 
 const starters = [
