@@ -10,6 +10,7 @@
 const pool = require("./db");
 const express = require("express");
 const cors = require("cors");
+// Import game logic functions from room.js
 const {
   addPlayer,
   createRoom,
@@ -257,6 +258,7 @@ app.get("/players/:roomCode", async (req, res) => {
   }
 });
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

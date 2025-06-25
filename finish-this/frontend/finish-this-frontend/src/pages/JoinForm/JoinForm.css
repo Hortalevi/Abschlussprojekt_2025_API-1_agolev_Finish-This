@@ -2,11 +2,12 @@
  * @ Author: Levi Agostinho Horta
  * @ Create Time: 2025-06-17 09:30:58
  * @ Modified by: Your name
- * @ Modified time: 2025-06-23 16:18:59
+ * @ Modified time: 2025-06-25 15:37:16
  * @ Description: Styling for the Join-Form in the beginning of the Game
- * @ Sources: Chatgpt and Claude AI, for Problems and Questions
+ * @ Sources: Chatgpt and Claude AI, for Problems and Questions.
  */
 
+/* Wrapper for the join form */
 .join-form-wrapper {
   position: relative;
   width: 100%;
@@ -15,6 +16,7 @@
   padding: 12px;
 }
 
+/* Notification banner styles */
 .notification {
   position: fixed;
   top: 12px;
@@ -34,6 +36,7 @@
   justify-content: space-between;
 }
 
+/* Notification color variants */
 .notification-success {
   background: rgba(16, 185, 129, 0.15);
   border-color: rgba(16, 185, 129, 0.3);
@@ -52,6 +55,7 @@
   color: #3b82f6;
 }
 
+/* Notification content and close button */
 .notification-content {
   display: flex;
   align-items: center;
@@ -101,6 +105,7 @@
   }
 }
 
+/* Main container for join/create options */
 .game-options-container {
   width: 100%;
   padding: 16px;
@@ -135,6 +140,7 @@
   }
 }
 
+/* Nickname input section */
 .nickname-section {
   text-align: center;
   margin-bottom: 20px;
@@ -164,6 +170,7 @@
   line-height: 1.4;
 }
 
+/* Grid for join/create cards */
 .options-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -171,6 +178,7 @@
   margin-bottom: 16px;
 }
 
+/* Card for join/create room */
 .option-card {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 16px;
@@ -257,6 +265,7 @@
   flex-shrink: 0;
 }
 
+/* Enhanced input field for nickname and room code */
 .input-field-enhanced {
   width: 100%;
   padding: 10px 14px;
@@ -305,6 +314,7 @@
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 
+/* Info section for create room card */
 .create-info {
   margin-bottom: 16px;
 }
@@ -326,6 +336,7 @@
   flex-shrink: 0;
 }
 
+/* Primary and secondary action buttons */
 .button-primary,
 .button-secondary {
   width: 100%;
@@ -426,6 +437,7 @@
   }
 }
 
+/* Footer with game instructions */
 .footer-section {
   text-align: center;
   padding-top: 16px;

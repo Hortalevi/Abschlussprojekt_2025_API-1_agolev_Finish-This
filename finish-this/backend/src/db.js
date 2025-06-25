@@ -11,6 +11,7 @@ const { Pool } = require("pg");
 
 let pool;
 
+// Use DATABASE_URL if set (production), else use local settings
 if (process.env.DATABASE_URL) {
   pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -26,4 +27,5 @@ if (process.env.DATABASE_URL) {
   });
 }
 
+// Export pool for database queries
 module.exports = pool;

@@ -2,7 +2,7 @@
  * @ Author: Levi Agostinho Horta
  * @ Create Time: 2025-06-02 14:39:59
  * @ Modified by: Your name
- * @ Modified time: 2025-06-23 16:20:12
+ * @ Modified time: 2025-06-25 15:22:20
  * @ Description: Form at the Start of the Game, so that Players can join a Lobby
  * @ Sources: Chatgpt and Claude AI, for Problems and Questions.
  */
@@ -23,16 +23,19 @@ interface Notification {
 }
 
 export default function JoinForm({ onJoin }: Props) {
+  // State for nickname, room code, loading, and notifications
   const [nickname, setNickname] = useState("")
   const [roomCode, setRoomCode] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [notification, setNotification] = useState<Notification | null>(null)
 
+  // Show notification with auto-dismiss
   const showNotification = (message: string, type: "success" | "error" | "info") => {
     setNotification({ message, type })
     setTimeout(() => setNotification(null), 4000)
   }
 
+  // Handle joining an existing room
   const handleSubmitJoin = async (e: React.FormEvent) => {
     e.preventDefault()
     const roomCodePattern = /^\d{4}$/
@@ -61,6 +64,7 @@ export default function JoinForm({ onJoin }: Props) {
     }
   }
 
+  // Handle creating a new room
   const handleCreateRoom = async () => {
     if (!nickname.trim()) {
       return showNotification("Please enter your nickname first", "error")
@@ -78,12 +82,14 @@ export default function JoinForm({ onJoin }: Props) {
     }
   }
 
+  // Format room code for display (adds space between digits)
   const formatRoomCode = (value: string) => {
     return value.replace(/(\d)(?=\d)/g, "$1 ")
   }
 
   return (
     <div className="join-form-wrapper">
+      {/* Notification banner for join/create feedback */}
       {notification && (
         <div className={`notification notification-${notification.type}`}>
           <div className="notification-content">
@@ -101,7 +107,7 @@ export default function JoinForm({ onJoin }: Props) {
       )}
 
       <div className="game-options-container">
-        {/* Nickname Section - Shared */}
+        {/* Nickname input section */}
         <div className="nickname-section">
           <h2 className="main-title">🎮 Join the Game</h2>
           <p className="main-subtitle">Enter your nickname to get started</p>
@@ -125,13 +131,12 @@ export default function JoinForm({ onJoin }: Props) {
           </div>
         </div>
 
-        {/* Two Options Side by Side */}
+        {/* Two options: join or create room */}
         <div className="options-grid">
           {/* Join Room Option */}
           <div className="option-card join-card">
             <div className="card-header">
               <h3 className="card-title">
-                <span className="card-icon">🚪</span>
                 Join Existing Room
               </h3>
               <p className="card-subtitle">Enter a 4-digit room code</p>
@@ -172,13 +177,13 @@ export default function JoinForm({ onJoin }: Props) {
           <div className="option-card create-card">
             <div className="card-header">
               <h3 className="card-title">
-                <span className="card-icon">➕</span>
                 Create New Room
               </h3>
               <p className="card-subtitle">Start a new game session</p>
             </div>
 
             <div className="card-form">
+              {/* Game info icons */}
               <div className="create-info">
                 <div className="info-item">
                   <span className="info-icon">🎯</span>
@@ -194,6 +199,7 @@ export default function JoinForm({ onJoin }: Props) {
                 </div>
               </div>
 
+              {/* Create room button */}
               <button
                 className="button-secondary"
                 type="button"
@@ -207,6 +213,7 @@ export default function JoinForm({ onJoin }: Props) {
           </div>
         </div>
 
+        {/* Footer with game instructions */}
         <div className="footer-section">
           <p className="footer-text">🎯 Complete sentences and vote for the funniest ones!</p>
         </div>

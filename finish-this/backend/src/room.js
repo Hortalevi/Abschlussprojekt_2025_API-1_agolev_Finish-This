@@ -9,6 +9,7 @@
 
 const pool = require("./db");
 
+// List of possible story starters
 const starters = [
   "Suddenly, the lights went out, and I heard...",
   "The letter in the mailbox said only one thing:",
@@ -31,6 +32,7 @@ const starters = [
   "There was a knock at the door...",
 ];
 
+// Generate a unique 4-digit room code and create a new room
 async function generateUniqueRoomCode(hostNickname) {
   let roomCode;
   let exists = true;
@@ -52,6 +54,7 @@ async function generateUniqueRoomCode(hostNickname) {
   return roomCode;
 }
 
+// Add a player to a room if not already present
 async function addPlayer(roomCode, nickname) {
   const roomCheck = await pool.query("SELECT 1 FROM rooms WHERE code = $1", [
     roomCode,
@@ -73,6 +76,7 @@ async function addPlayer(roomCode, nickname) {
   }
 }
 
+// Get or set a random starter for the room
 async function getStarter(roomCode) {
   const result = await pool.query("SELECT starter FROM rooms WHERE code = $1", [
     roomCode,
@@ -89,6 +93,7 @@ async function getStarter(roomCode) {
   return starter;
 }
 
+// Get the current status of the room (timer, round, player count)
 async function getRoomStatus(roomCode) {
   const result = await pool.query(
     "SELECT countdown_started_at, round FROM rooms WHERE code = $1",
@@ -321,6 +326,7 @@ async function forceStart(roomCode) {
   );
 }
 
+// Export all room-related functions
 module.exports = {
   generateUniqueRoomCode,
   addPlayer,

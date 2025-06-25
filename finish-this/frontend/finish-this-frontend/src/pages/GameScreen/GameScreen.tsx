@@ -2,7 +2,7 @@
  * @ Author: Levi Agostinho Horta
  * @ Create Time: 2025-06-03 08:51:02
  * @ Modified by: Your name
- * @ Modified time: 2025-06-23 16:17:34
+ * @ Modified time: 2025-06-25 15:39:04
  * @ Description: Game-Screen so that Players can play the Game, this is per say the main function of the code
  * * @ Sources: Chatgpt and Claude AI, for Problems and Questions
  */
@@ -23,6 +23,7 @@ import {
 } from "../../api/api"
 import type { SentenceEntry } from "../../types/types"
 
+// Emoji voting options and their point values
 const emojis = ["😍", "😂", "🤔", "💩"]
 const emojiPoints: { [emoji: string]: number } = {
   "😍": 3,
@@ -36,6 +37,7 @@ interface Props {
   readonly roomCode: string
 }
 
+// Returns a medal emoji or rank number for podium
 function getMedal(index: number): string {
   switch (index) {
     case 0:
@@ -49,6 +51,7 @@ function getMedal(index: number): string {
   }
 }
 
+// Calls backend to update scores after voting
 async function updateScores(roomCode: string) {
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/calculate-scores`, {
@@ -66,6 +69,7 @@ async function updateScores(roomCode: string) {
   }
 }
 
+// Fetches the player ranking from backend
 async function getRanking(roomCode: string) {
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/ranking/${roomCode}`)
@@ -80,6 +84,7 @@ async function getRanking(roomCode: string) {
 }
 
 export default function GameScreen({ nickname, roomCode }: Props) {
+  // State for sentence input, round, votes, and UI
   const [starter, setStarter] = useState("")
   const [sentence, setSentence] = useState("")
   const [submitted, setSubmitted] = useState(false)
@@ -95,6 +100,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
   const [showPodium, setShowPodium] = useState(false)
   const [totalScores, setTotalScores] = useState<Record<string, number>>({})
 
+  // Handles setup for a new round
   const handleNewRound = useCallback(async () => {
     setSentence("")
     setSubmitted(false)
@@ -110,6 +116,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     }
   }, [roomCode])
 
+  // Polls for round changes, voting status, and updates scores/ranking
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
@@ -151,6 +158,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     return () => clearInterval(interval)
   }, [roomCode, starter, showAllSentences, allVoted, round, showPodium, handleNewRound, totalScores])
 
+  // Handles sentence submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (sentence.trim() === "") return alert("Please write a sentence.")
@@ -169,6 +177,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     }
   }
 
+  // Polls until all players have submitted their sentences
   const pollUntilAllSubmitted = useCallback(() => {
     if (pollIntervalId) clearInterval(pollIntervalId)
 
@@ -190,12 +199,14 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     setPollIntervalId(id)
   }, [roomCode, pollIntervalId])
 
+  // Cleanup polling interval on unmount
   useEffect(() => {
     return () => {
       if (pollIntervalId) clearInterval(pollIntervalId)
     }
   }, [pollIntervalId])
 
+  // Handles voting for a sentence with an emoji
   const handleVote = async (sentenceId: string, emoji: string) => {
     setUserVotes((prev) => {
       const updated = { ...prev }
@@ -220,6 +231,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     }
   }
 
+  // Advances to the next round
   const triggerNextRound = async () => {
     setIsLoading(true)
     try {
@@ -232,6 +244,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     }
   }
 
+  // Fetches best sentences for the podium view
   useEffect(() => {
     if (showPodium) {
       getBestSentences(roomCode)
@@ -240,6 +253,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
     }
   }, [showPodium, roomCode])
 
+  // Renders the main content for each game phase
   const renderContent = () => {
     if (showPodium) {
       console.log("Best sentences from backend:", bestSentences);
@@ -446,6 +460,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
       <h2>Hi {nickname}, your sentence is:</h2>
       <div className="starter-sentence">{starter}</div>
 
+      {/* Main game content (submission, voting, results, etc.) */}
       {renderContent()}
 
       <div className="game-info">
