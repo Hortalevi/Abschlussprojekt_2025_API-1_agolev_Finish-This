@@ -85,6 +85,7 @@ Planned Enhancements:
 
 Link to the Game:
 [Link to the Game!](https://finish-this-frontend.onrender.com/)
+
 Author:\
 Levi Agostinho Horta\
 Apprenticeship: Applikationsentwickler\
