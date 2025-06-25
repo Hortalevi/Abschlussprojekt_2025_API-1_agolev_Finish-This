@@ -2,7 +2,7 @@
  * @ Author: Levi Agostinho Horta
  * @ Create Time: 2025-06-02 13:23:59
  * @ Modified by: Your name
- * @ Modified time: 2025-06-23 16:26:17
+ * @ Modified time: 2025-06-25 14:36:28
  * @ Description: Styling for the index
  * @ Sources: Chatgpt and Claude AI, for Problems and Questions.
  */
@@ -22,6 +22,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Style for all anchor tags */
 a {
   font-weight: 500;
   color: #646cff;
@@ -34,7 +35,7 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+  place-items: center; /* Center content vertically and horizontally */
   min-width: 320px;
   min-height: 100vh;
 }
@@ -44,6 +45,7 @@ h1 {
   line-height: 1.1;
 }
 
+/* Button base style for consistent look */
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -63,6 +65,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Light mode overrides for color scheme */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

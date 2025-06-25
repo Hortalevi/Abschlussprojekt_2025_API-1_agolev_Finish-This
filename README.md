@@ -83,9 +83,11 @@ Planned Enhancements:
 
 -   Game timer and round limit
 
+Link to the Game:
+[Link to the Game!](https://finish-this-frontend.onrender.com/)
 Author:\
 Levi Agostinho Horta\
 Apprenticeship: Applikationsentwickler\
 Company: AdnovumAG\
 Date: 25.06.2025\
-Version: 1.8
+Version: 2.1
