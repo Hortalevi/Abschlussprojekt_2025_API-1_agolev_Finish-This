@@ -1,8 +1,8 @@
 /**
  * @ Author: Levi Agostinho Horta
  * @ Create Time: 2025-06-20 14:49:01
- * @ Modified by: Levi Agostinho Horta
- * @ Modified time: 2025-06-24 15:18:05
+ * @ Modified by: Your name
+ * @ Modified time: 2025-06-29 16:08:22
  * @ Description: Has all the needed function for a Room
  * @ Sources: Chatgpt and Claude AI, for Problems and Questions.
  */
@@ -145,7 +145,7 @@ async function getRound(roomCode) {
 
 async function advanceRound(roomCode) {
   const current = await getRound(roomCode);
-  if (current >= 7) throw new Error("Max rounds reached");
+  if (current >= 3) throw new Error("Max rounds reached");
 
   await pool.query(
     "UPDATE rooms SET round = $1, starter = NULL, round_started_at = NULL, countdown_started_at = NULL WHERE code = $2",
