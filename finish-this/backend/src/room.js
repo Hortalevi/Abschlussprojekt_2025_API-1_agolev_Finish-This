@@ -2,7 +2,7 @@
  * @ Author: Levi Agostinho Horta
  * @ Create Time: 2025-06-20 14:49:01
  * @ Modified by: Your name
- * @ Modified time: 2025-06-29 16:08:22
+ * @ Modified time: 2025-06-29 16:16:49
  * @ Description: Has all the needed function for a Room
  * @ Sources: Chatgpt and Claude AI, for Problems and Questions.
  */

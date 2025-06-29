@@ -2,7 +2,7 @@
  * @ Author: Levi Agostinho Horta
  * @ Create Time: 2025-06-03 08:51:02
  * @ Modified by: Your name
- * @ Modified time: 2025-06-25 15:39:04
+ * @ Modified time: 2025-06-29 16:16:24
  * @ Description: Game-Screen so that Players can play the Game, this is per say the main function of the code
  * * @ Sources: Chatgpt and Claude AI, for Problems and Questions
  */
@@ -147,7 +147,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
           }
         }
 
-        if (currentRound > 7 && !showPodium) {
+        if (currentRound > 3 && !showPodium) {
           setShowPodium(true)
         }
       } catch (error) {
@@ -434,7 +434,7 @@ export default function GameScreen({ nickname, roomCode }: Props) {
 
         {allVoted ? (
           <div className="button-container">
-            {round < 7 ? (
+            {round < 3 ? (
               <button onClick={triggerNextRound} className="button-join" disabled={isLoading}>
                 {isLoading ? "Starting..." : "🔁 Start New Round"}
               </button>
